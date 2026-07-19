@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Venue
+{% endblock %}
+
+{% block content %}
+
+<h2>Edit Venue</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'venue_list' %}">Cancel</a>
+</form>
+
+{% endblock %}

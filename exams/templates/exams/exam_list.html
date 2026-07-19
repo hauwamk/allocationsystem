@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+Exams
+{% endblock %}
+
+{% block content %}
+
+<h2>Exam Schedule</h2>
+<a href="{% url 'add_exam' %}" class="btn btn-primary mb-3">+ Add Exam</a>
+
+<table border="1">
+    <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Duration</th>
+        <th>Action</th>
+    </tr>
+
+    {% for exam in exams %}
+    <tr>
+        <td>{{ exam.course.course_code }}</td>
+        <td>{{ exam.exam_date }}</td>
+        <td>{{ exam.exam_time }}</td>
+        <td>{{ exam.duration }} mins</td>
+        <td>
+            <a href="{% url 'edit_exam' exam.id %}">Edit</a> |
+            <a href="{% url 'delete_exam' exam.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

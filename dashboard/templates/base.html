@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Exam Allocation System{% endblock %}</title>
+</head>
+<body>
+
+    <h1>Exam Allocation System</h1>
+    <hr>
+
+    <nav>
+        <a href="/dashboard/">Dashboard</a> |
+        <a href="/students/">Students</a> |
+        <a href="/courses/">Courses</a> |
+        <a href="/venues/">Venues</a> |
+        <a href="/invigilators/">Invigilators</a> |
+        <a href="/exams/">Exams</a> |
+        <a href="/reports/">Reports</a>
+        <a href="/students/import/">Import Students</a>
+    </nav>
+
+    <hr>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

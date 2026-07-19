@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Venues
+{% endblock %}
+
+{% block content %}
+
+<h2>Venue List</h2>
+<a href="{% url 'add_venue' %}" class="btn btn-primary mb-3">+ Add Venue</a>
+
+<table border="1">
+    <tr>
+        <th>Venue Name</th>
+        <th>Capacity</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for venue in venues %}
+    <tr>
+        <td>{{ venue.venue_name }}</td>
+        <td>{{ venue.capacity }}</td>
+        <td>
+            <a href="{% url 'edit_venue' id=venue.id %}">Edit</a> |
+            <a href="{% url 'delete_venue' id=venue.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

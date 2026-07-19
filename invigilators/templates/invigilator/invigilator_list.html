@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Invigilators
+{% endblock %}
+
+{% block content %}
+
+<h2>Invigilator List</h2>
+<a href="{% url 'add_invigilator' %}" class="btn btn-primary mb-3">+ Add Invigilator</a>
+
+<table border="1">
+    <tr>
+        <th>Staff ID</th>
+        <th>Full Name</th>
+        <th>Phone Number</th>
+        <th>Action</th>
+    </tr>
+
+    {% for invigilator in invigilators %}
+    <tr>
+        <td>{{ invigilator.staff_id }}</td>
+        <td>{{ invigilator.full_name }}</td>
+        <td>{{ invigilator.phone_number }}</td>
+        <td>
+            <a href="{% url 'edit_invigilator' invigilator.id %}">Edit</a> |
+            <a href="{% url 'delete_invigilator' invigilator.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

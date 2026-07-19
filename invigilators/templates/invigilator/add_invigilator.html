@@ -1,0 +1,18 @@
+
+{% block title %}
+Add Invigilator
+{% endblock %}
+
+{% block content %}
+
+<h2>Add Invigilator</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Add Invigilator</button>
+    <a href="{% url 'invigilators_list' %}">Cancel</a>
+</form>
+
+{% endblock %}

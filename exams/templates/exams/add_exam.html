@@ -1,0 +1,17 @@
+{% block title %}
+Add Exam
+{% endblock %}
+
+{% block content %}
+
+<h2>Add Exam</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Add Exam</button>
+    <a href="{% url 'exam_list' %}">Cancel</a>
+</form>
+
+{% endblock %}

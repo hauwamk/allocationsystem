@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+Delete Exam
+{% endblock %}
+
+{% block content %}
+
+<h2>Delete Exam</h2>
+
+<p>
+Are you sure you want to delete
+<strong>{{ exam.course.course_code }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+</form>
+
+<a href="{% url 'exam_list' %}">Cancel</a>
+
+{% endblock %}

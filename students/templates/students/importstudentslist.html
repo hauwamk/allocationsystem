@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+Import Students
+{% endblock %}
+
+{% block content %}
+
+<h2>Import Students</h2>
+#it is a form that allows users to upload a CSV file containing students data.
+<form method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Import</button>
+
+</form>
+
+{% endblock %}

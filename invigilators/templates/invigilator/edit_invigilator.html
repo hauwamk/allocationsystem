@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Invigilator
+{% endblock %}
+
+{% block content %}
+
+<h2>Edit Invigilator</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'invigilators_list' %}">Cancel</a>
+</form>
+
+{% endblock %}
