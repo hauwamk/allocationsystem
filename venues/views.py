@@ -1,12 +1,13 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib import messages
 
+from accounts.decorators import staff_required
 from venues.forms import VenueForm
 from .models import Venue
 
 #returns a list of all venues
+@staff_required
 def venue_list(request):
     venues = Venue.objects.all()
 
@@ -16,6 +17,7 @@ def venue_list(request):
 
     return render(request, "venues/venue_list.html", context)
 
+@staff_required
 def edit_venue(request, id):
     venue = get_object_or_404(Venue, id=id)
 
@@ -32,6 +34,7 @@ def edit_venue(request, id):
 
     return render(request, "venues/edit_venue.html", {"form": form})
 
+@staff_required
 def delete_venue(request, id):
     venue = get_object_or_404(Venue, id=id)
 
@@ -42,6 +45,7 @@ def delete_venue(request, id):
 
     return render(request, "venues/delete_venue.html", {"venue": venue})
 
+@staff_required
 def add_venue(request):
     if request.method == "POST":
         form = VenueForm(request.POST)

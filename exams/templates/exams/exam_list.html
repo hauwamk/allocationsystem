@@ -8,6 +8,7 @@ Exams
 
 <h2>Exam Schedule</h2>
 <a href="{% url 'add_exam' %}" class="btn btn-primary mb-3">+ Add Exam</a>
+<a href="{% url 'allocate_all_exams' %}" class="btn btn-secondary mb-3">Allocate All Exams</a>
 
 <table border="1">
     <tr>
@@ -26,7 +27,8 @@ Exams
         <td>{{ exam.duration }} mins</td>
         <td>
             <a href="{% url 'edit_exam' exam.id %}">Edit</a> |
-            <a href="{% url 'delete_exam' exam.id %}">Delete</a>
+            <a href="{% url 'delete_exam' exam.id %}">Delete</a> |
+            <a href="{% url 'allocate_exam' exam.id %}">Allocate</a>
         </td>
     </tr>
     {% endfor %}

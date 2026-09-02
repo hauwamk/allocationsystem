@@ -1,5 +1,6 @@
 from django.db import models
 from courses.models import Course
+from django.contrib.auth.models import User
 
 class Student(models.Model):
     LEVEL_CHOICES = [
@@ -19,6 +20,8 @@ class Student(models.Model):
         ("M", "Male"),
         ("F", "Female"),
     ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name="student")
 
     registration_number = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=50)

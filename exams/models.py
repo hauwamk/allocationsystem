@@ -11,3 +11,5 @@ class Exam(models.Model):
 
     def __str__(self):
         return f"{self.course.course_code} - {self.exam_date}"
+    
+    

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ invigilator.full_name }}</h2>
+<p>Staff ID: {{ invigilator.staff_id }}</p>
+
+<h3>My Assigned Sessions</h3>
+
+{% if sessions %}
+<table border="1">
+    <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Venue</th>
+    </tr>
+    {% for session in sessions %}
+    <tr>
+        <td>{{ session.exam.course.course_code }}</td>
+        <td>{{ session.exam.exam_date }}</td>
+        <td>{{ session.exam.exam_time }}</td>
+        <td>{{ session.venue.venue_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>You have no assigned sessions yet.</p>
+{% endif %}
+
+<form method="post" action="{% url 'invigilator_logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="link-button">Logout</button>
+</form>
+{% endblock %}

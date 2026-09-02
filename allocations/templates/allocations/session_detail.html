@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Seating - {{ session.exam.course.course_code }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ session.exam.course.course_code }} — {{ session.venue.venue_name }}</h2>
+<p>Date: {{ session.exam.exam_date }} | Invigilator: {{ session.invigilator }}</p>
+
+<table border="1">
+    <tr>
+        <th>Seat</th>
+        <th>Registration Number</th>
+        <th>Name</th>
+    </tr>
+    {% for alloc in allocations %}
+    <tr>
+        <td>{{ alloc.seating_number }}</td>
+        <td>{{ alloc.student.registration_number }}</td>
+        <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No students seated in this session.</td></tr>
+    {% endfor %}
+</table>
+
+<p><a href="{% url 'session_list' %}">Back to sessions</a></p>
+
+{% endblock %}

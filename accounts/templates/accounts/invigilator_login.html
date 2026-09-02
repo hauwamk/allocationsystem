@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Invigilator Login{% endblock %}
+
+{% block content %}
+<h2>Invigilator Login</h2>
+<p>Log in with your staff ID and password.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Log in</button>
+</form>
+{% endblock %}

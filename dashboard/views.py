@@ -1,5 +1,6 @@
 from django.db.models import Count
 from django.shortcuts import render
+from accounts.decorators import staff_required
 from students.models import Student
 from courses.models import Course
 from venues.models import Venue
@@ -8,6 +9,7 @@ from invigilators.models import Invigilator
 from allocations.models import Allocation
 
 
+@staff_required
 def dashboard(request):
     total_students = Student.objects.count()
     total_courses = Course.objects.count()

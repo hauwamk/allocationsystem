@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Register Courses{% endblock %}
+
+{% block content %}
+<h2>Register Courses for {{ student.registration_number }} - {{ student.first_name }} {{ student.last_name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.courses }}
+    <br>
+    <button type="submit" class="btn btn-primary">Save Registrations</button>
+</form>
+{% endblock %}

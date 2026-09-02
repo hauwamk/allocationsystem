@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Allocations{% endblock %}
+
+{% block content %}
+
+<h2>Exam Sessions</h2>
+
+<table border="1">
+    <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Venue</th>
+        <th>Invigilator</th>
+        <th>Action</th>
+    </tr>
+
+    {% for session in sessions %}
+    <tr>
+        <td>{{ session.exam.course.course_code }}</td>
+        <td>{{ session.exam.exam_date }}</td>
+        <td>{{ session.venue.venue_name }}</td>
+        <td>{{ session.invigilator }}</td>
+        <td><a href="{% url 'session_detail' session.id %}">View Seating</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No exam sessions yet — allocate an exam first.</td></tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

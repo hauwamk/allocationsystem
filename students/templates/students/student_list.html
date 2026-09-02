@@ -10,6 +10,9 @@ Students
 <a href="{% url 'add_student' %}" class ="btn btn-primary mb-3">
     +Add Student
 </a>
+<a href="{% url 'bulk_register' %}" class="btn btn-secondary mb-3">
+    Bulk Register Courses
+</a>
 
 <table border="1">
     <tr>
@@ -31,6 +34,7 @@ Students
             <td>
                 <a href="{% url 'delete_student' id=student.id %}">Delete</a>
                 <a href="{% url 'edit_student' id=student.id %}">Edit</a>
+                <a href="{% url 'register_courses' id=student.id %}">Register</a>
             </td>
         </tr>
     {% endfor %}

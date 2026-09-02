@@ -1,22 +1,51 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>{% block title %}Exam Allocation System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <h1>Exam Allocation System</h1>
-    <hr>
+    <div class="header-bar">
+        <h1><a href="/" style="color:inherit; text-decoration:none;">Exam Allocation System</a></h1>
+        <button class="nav-toggle" onclick="document.getElementById('mainNav').classList.toggle('open')" aria-label="Toggle menu">&#9776;</button>
+    </div>
 
-    <nav>
+    <nav id="mainNav">
         <a href="/dashboard/">Dashboard</a> |
         <a href="/students/">Students</a> |
         <a href="/courses/">Courses</a> |
         <a href="/venues/">Venues</a> |
         <a href="/invigilators/">Invigilators</a> |
         <a href="/exams/">Exams</a> |
-        <a href="/reports/">Reports</a>
-        <a href="/students/import/">Import Students</a>
+        <a href="/allocations/sessions/">Allocations</a> |
+        <a href="/reports/">Reports</a> |
+        <a href="/students/import/">Import Students</a> |
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <form method="post" action="{% url 'exam_officer_logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                </form>
+            {% elif user.student %}
+                <a href="{% url 'student_dashboard' %}">My Dashboard</a> |
+                <form method="post" action="{% url 'student_logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                </form>
+            {% elif user.invigilator %}
+                <a href="{% url 'invigilator_dashboard' %}">My Dashboard</a> |
+                <form method="post" action="{% url 'invigilator_logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'exam_officer_login' %}">Exam Officer Login</a> |
+            <a href="{% url 'student_login' %}">Student Login</a> |
+            <a href="{% url 'invigilator_login' %}">Invigilator Login</a>
+        {% endif %}
     </nav>
 
     <hr>

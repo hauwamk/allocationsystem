@@ -5,8 +5,9 @@ from io import TextIOWrapper
 from django.contrib import messages
 from django.shortcuts import render
 
-from .forms import StudentEditForm, StudentImportForm 
-from .models import Student
+from accounts.decorators import staff_required
+from .forms import StudentEditForm, StudentImportForm, RegisterCourseForm
+from .models import Student, Registration
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -32,12 +33,13 @@ def _get_field(row, *possible_names):
             return value.strip()
     return ""
 
+@staff_required
 def students_list(request):
     students = Student.objects.all()
-    #a dictionary that sends data from view to html template
     context = {'students': students}
     return render(request, 'students/student_list.html', context)
 
+@staff_required
 def import_students(request):
     if request.method == "POST":
         form = StudentImportForm(request.POST, request.FILES)
@@ -93,6 +95,8 @@ def import_students(request):
         "students/importstudentslist.html",
         {"form": form},
     )
+
+@staff_required
 def delete_student(request, id):
     student = get_object_or_404(Student, id=id)
 
@@ -103,6 +107,7 @@ def delete_student(request, id):
 
     return render(request, "students/delete_student.html", {"student": student})
 
+@staff_required
 def edit_student(request, id):
     student = get_object_or_404(Student, id=id)
 
@@ -115,19 +120,44 @@ def edit_student(request, id):
             return redirect("students_list")
 
     else:
-        #Fill the form with the existing student data
         form = StudentEditForm(instance=student)
 
     return render(request, "students/edit_student.html", {"form": form})
 
+@staff_required
 def add_student(request):
     if request.method == "POST":
         form = StudentEditForm(request.POST)
         if form.is_valid():
-            form.save()
+            student = form.save(commit=False)
+            from django.contrib.auth.models import User
+            user, _ = User.objects.get_or_create(username=student.registration_number)
+            user.set_password(student.registration_number)
+            user.save()
+            student.user = user
+            student.save()
             messages.success(request, "Student added successfully.")
             return redirect("students_list")
     else:
         form = StudentEditForm()
 
     return render(request, "students/add_student.html", {"form": form})
+
+@staff_required
+def register_courses(request, id):
+    student = get_object_or_404(Student, id=id)
+    current_course_ids = Registration.objects.filter(student=student).values_list("course_id", flat=True)
+
+    if request.method == "POST":
+        form = RegisterCourseForm(request.POST)
+        if form.is_valid():
+            selected_courses = form.cleaned_data["courses"]
+            Registration.objects.filter(student=student).exclude(course__in=selected_courses).delete()
+            for course in selected_courses:
+                Registration.objects.get_or_create(student=student, course=course)
+            messages.success(request, f"Updated course registrations for {student.registration_number}.")
+            return redirect("students_list")
+    else:
+        form = RegisterCourseForm(initial={"courses": current_course_ids})
+
+    return render(request, "students/register_courses.html", {"form": form, "student": student})

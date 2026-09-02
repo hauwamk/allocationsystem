@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ student.first_name }} {{ student.last_name }}</h2>
+<p>Registration Number: {{ student.registration_number }}</p>
+
+<h3>My Exams</h3>
+
+{% if exam_rows %}
+<table border="1">
+    <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Venue</th>
+        <th>Seat</th>
+    </tr>
+    {% for row in exam_rows %}
+    <tr>
+        <td>{{ row.exam.course.course_code }}</td>
+        <td>{{ row.exam.exam_date }}</td>
+        <td>{{ row.exam.exam_time }}</td>
+        {% if row.allocation %}
+            <td>{{ row.allocation.exam_session.venue.venue_name }}</td>
+            <td>{{ row.allocation.seating_number }}</td>
+        {% else %}
+            <td colspan="2">Not yet allocated</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>You have no exams scheduled.</p>
+{% endif %}
+
+<form method="post" action="{% url 'student_logout' %}">
+    {% csrf_token %}
+    <button type="submit" style="background:none;border:none;color:blue;text-decoration:underline;cursor:pointer;padding:0;font:inherit;">Logout</button>
+</form>
+{% endblock %}
