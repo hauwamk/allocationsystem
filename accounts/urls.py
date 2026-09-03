@@ -13,5 +13,6 @@ urlpatterns = [
 
     path("staff/login/", views.ExamOfficerLoginView.as_view(), name="exam_officer_login"),
     path("staff/logout/", LogoutView.as_view(next_page="exam_officer_login"), name="exam_officer_logout"),
+    path("import/", views.import_hub, name="import_hub"),
     
 ]

@@ -1,10 +1,9 @@
-
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from accounts.decorators import staff_required
 from students.models import Registration
 from allocations.models import Allocation, ExamSession
 
@@ -17,17 +16,12 @@ class StudentLoginView(auth_views.LoginView):
 def student_dashboard(request):
     student = getattr(request.user, "student", None)
     if student is None:
-        # Logged-in account isn't linked to a Student record (e.g. an admin
-        # account used to test this page) — nothing to show here.
         return redirect("students_list")
 
     registered_courses = [
         r.course for r in Registration.objects.filter(student=student).select_related("course")
     ]
 
-    # One Allocation row per (student, exam_session) already carries the
-    # course via exam_session.exam.course, so this alone gives us venue +
-    # seat for every exam this student has actually been allocated to.
     allocations = Allocation.objects.filter(student=student).select_related(
         "exam_session__exam__course", "exam_session__venue", "exam_session__invigilator"
     )
@@ -44,13 +38,11 @@ def student_dashboard(request):
 
     return render(request, "accounts/dashboard.html", {"student": student, "exam_rows": exam_rows})
 
+
 class InvigilatorLoginView(auth_views.LoginView):
     template_name = "accounts/invigilator_login.html"
 
     def get_default_redirect_url(self):
-        # Always send invigilators to their own dashboard after login,
-        # independent of the site-wide LOGIN_REDIRECT_URL (which points
-        # students to theirs).
         return reverse("invigilator_dashboard")
 
 
@@ -69,6 +61,12 @@ def invigilator_dashboard(request):
         "accounts/invigilator_dashboard.html",
         {"invigilator": invigilator, "sessions": sessions},
     )
+
+
+@staff_required
+def import_hub(request):
+    return render(request, "import_hub.html")
+
 
 class ExamOfficerLoginView(auth_views.LoginView):
     """

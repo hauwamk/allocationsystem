@@ -19,9 +19,9 @@
         <a href="/venues/">Venues</a> |
         <a href="/invigilators/">Invigilators</a> |
         <a href="/exams/">Exams</a> |
-        <a href="/allocations/sessions/">Allocations</a> |
+        <a href="/allocations/">Allocations</a> |
         <a href="/reports/">Reports</a> |
-        <a href="/students/import/">Import Students</a> |
+        <a href="{% url 'import_hub' %}">Import Data</a> |
         {% if user.is_authenticated %}
             {% if user.is_staff %}
                 <form method="post" action="{% url 'exam_officer_logout' %}" style="display:inline;">

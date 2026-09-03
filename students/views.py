@@ -63,6 +63,7 @@ def import_students(request):
                     first_name = _get_field(row, "first_name", "first name")
                     last_name = _get_field(row, "last_name", "last name")
                     level = _get_field(row, "level")
+                    department = _get_field(row, "department")
                     gender = _get_field(row, "gender")
                     email = _get_field(row, "email")
 
@@ -72,10 +73,20 @@ def import_students(request):
                             "first_name": first_name,
                             "last_name": last_name,
                             "level": level,
+                            "department": department,
                             "gender": gender,
                             "email": email,
                         },
                     )
+
+                    if created:
+                        from django.contrib.auth.models import User
+                        student = Student.objects.get(registration_number=registration_number)
+                        user, _ = User.objects.get_or_create(username=registration_number)
+                        user.set_password(registration_number)
+                        user.save()
+                        student.user = user
+                        student.save()
 
                     if created:
                         imported += 1

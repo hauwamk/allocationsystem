@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 
 {% block title %}
-Import Students
+Import Invigilators
 {% endblock %}
 
 {% block content %}
 
-<h2>Import Students</h2>
+<h2>Import Invigilators</h2>
+<p>CSV columns: Staff ID, Full Name, Phone Number. Each new invigilator gets a login automatically (username and starting password = staff ID).</p>
 
 <form method="post" enctype="multipart/form-data">
-
     {% csrf_token %}
-
     {{ form.as_p }}
-
-    <button type="submit">Import</button>
-
+    <button type="submit" class="btn">Import</button>
 </form>
 <p><a href="{% url 'import_hub' %}">Back to Import data</a></p>
+
 {% endblock %}

@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 
 {% block title %}
-Import Students
+Import Courses
 {% endblock %}
 
 {% block content %}
 
-<h2>Import Students</h2>
+<h2>Import Courses</h2>
+<p>CSV columns: Course Code, Course Title, Department (CS/SE/IT/CY), Level (100/200/300/400), Semester (First/Second).</p>
 
 <form method="post" enctype="multipart/form-data">
-
     {% csrf_token %}
-
     {{ form.as_p }}
-
-    <button type="submit">Import</button>
-
+    <button type="submit" class="btn">Import</button>
 </form>
 <p><a href="{% url 'import_hub' %}">Back to Import data</a></p>
+
 {% endblock %}

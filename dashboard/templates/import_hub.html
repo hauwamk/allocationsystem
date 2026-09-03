@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Import Data{% endblock %}
+
+{% block content %}
+<h2>Import Data</h2>
+<p>Upload CSV files to bulk-load students, courses, or invigilators.</p>
+
+<ul style="list-style:none; padding:0;">
+    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
+        <a href="{% url 'import_students' %}" class="btn">Import Students</a>
+    </li>
+    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
+        <a href="{% url 'import_courses' %}" class="btn">Import Courses</a>
+    </li>
+    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
+        <a href="{% url 'import_invigilators' %}" class="btn">Import Invigilators</a>
+    </li>
+</ul>
+{% endblock %}
