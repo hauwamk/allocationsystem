@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Import Data{% endblock %}
+{% block title %}Import Data | Exam Allocation System{% endblock %}
 
 {% block content %}
-<h2>Import Data</h2>
-<p>Upload CSV files to bulk-load students, courses, or invigilators.</p>
+<h2>Data Import Hub</h2>
+<p>Upload structured CSV data files to bulk-load students, courses, or invigilators into the system.</p>
 
-<ul style="list-style:none; padding:0;">
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="{% url 'import_students' %}" class="btn">Import Students</a>
-    </li>
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="{% url 'import_courses' %}" class="btn">Import Courses</a>
-    </li>
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="{% url 'import_invigilators' %}" class="btn">Import Invigilators</a>
-    </li>
-</ul>
+<div class="dashboard-cards">
+    <div class="card" style="text-align: left;">
+        <h4>Student Directory</h4>
+        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Bulk register student profiles, levels, and departments.</p>
+        <a href="{% url 'import_students' %}" class="btn btn-primary">Import Students</a>
+    </div>
+    <div class="card" style="text-align: left;">
+        <h4>Course Catalog</h4>
+        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Upload course codes, titles, departments, and levels.</p>
+        <a href="{% url 'import_courses' %}" class="btn btn-primary">Import Courses</a>
+    </div>
+    <div class="card" style="text-align: left;">
+        <h4>Invigilators Roster</h4>
+        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Import supervisor staff accounts and contact phone numbers.</p>
+        <a href="{% url 'import_invigilators' %}" class="btn btn-primary">Import Invigilators</a>
+    </div>
+</div>
 {% endblock %}

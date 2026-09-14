@@ -3,13 +3,12 @@ import re
 from io import TextIOWrapper
 
 from django.contrib import messages
-from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404, redirect
 
 from accounts.decorators import staff_required
 from .forms import StudentEditForm, StudentImportForm, RegisterCourseForm
 from .models import Student, Registration
-
-from django.shortcuts import get_object_or_404, redirect
 
 
 def _normalize_header(header):

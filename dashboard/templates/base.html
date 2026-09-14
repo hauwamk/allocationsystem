@@ -1,65 +1,202 @@
 <!DOCTYPE html>
 {% load static %}
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Exam Allocation System{% endblock %}</title>
+    <!-- Google Fonts: Plus Jakarta Sans for crisp, modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Core Application Stylesheet -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <div class="header-bar">
-        <h1><a href="/" style="color:inherit; text-decoration:none;">Exam Allocation System</a></h1>
-        <button class="nav-toggle" onclick="document.getElementById('mainNav').classList.toggle('open')" aria-label="Toggle menu">&#9776;</button>
+    <!-- Header & Branding Bar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" class="brand-logo">
+                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    <div class="brand-text">
+                        <span class="brand-name">Faculty of Computing</span>
+                        <span class="brand-subtitle">Examination Venue & Seat Allocation</span>
+                    </div>
+                </a>
+            </div>
+            <button class="nav-toggle" onclick="document.getElementById('mainNav').classList.toggle('open')" aria-label="Toggle Navigation Menu">
+                &#9776;
+            </button>
+        </div>
+
+        <!-- Global Navigation -->
+
+   <!-- Global Navigation -->
+{% block global_nav %}
+
+{% if request.path == "/" %}
+
+<!-- HOME PAGE NAVIGATION -->
+<nav id="mainNav" class="app-nav">
+    <div class="nav-inner-container">
+
+        <div class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/#portals" class="nav-item">About</a>
+        </div>
+
     </div>
+</nav>
 
-    <nav id="mainNav">
-        <a href="/dashboard/">Dashboard</a> |
-        <a href="/students/">Students</a> |
-        <a href="/courses/">Courses</a> |
-        <a href="/venues/">Venues</a> |
-        <a href="/invigilators/">Invigilators</a> |
-        <a href="/exams/">Exams</a> |
-        <a href="/allocations/">Allocations</a> |
-        <a href="/reports/">Reports</a> |
-        <a href="{% url 'import_hub' %}">Import Data</a> |
+{% elif request.path != "/dashboard/" %}
+
+<!-- OTHER PAGES NAVIGATION -->
+<nav id="mainNav" class="app-nav">
+
+    <div class="nav-inner-container">
+
         {% if user.is_authenticated %}
+
             {% if user.is_staff %}
-                <form method="post" action="{% url 'exam_officer_logout' %}" style="display:inline;">
+
+            <div class="nav-links">
+                <a href="/" class="nav-item">Home</a>
+                <a href="/dashboard/" class="nav-item">Dashboard</a>
+                <a href="/students/" class="nav-item">Students</a>
+                <a href="/courses/" class="nav-item">Courses</a>
+                <a href="/venues/" class="nav-item">Venues</a>
+                <a href="/invigilators/" class="nav-item">Invigilators</a>
+                <a href="/exams/" class="nav-item">Exams</a>
+                <a href="/allocations/" class="nav-item">Allocations</a>
+                <a href="{% url 'import_hub' %}" class="nav-item">Import Hub</a>
+            </div>
+
+            <div class="nav-user">
+                <span class="user-badge admin">
+                    Officer: {{ user.username }}
+                </span>
+
+                <form method="post"
+                      action="{% url 'exam_officer_logout' %}"
+                      class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-light">
+                        Logout
+                    </button>
                 </form>
+            </div>
+
             {% elif user.student %}
-                <a href="{% url 'student_dashboard' %}">My Dashboard</a> |
-                <form method="post" action="{% url 'student_logout' %}" style="display:inline;">
+
+            <div class="nav-links">
+                <a href="/" class="nav-item">Home</a>
+                <a href="{% url 'student_dashboard' %}" class="nav-item">
+                    My Dashboard
+                </a>
+            </div>
+
+            <div class="nav-user">
+                <span class="user-badge student">
+                    Student: {{ user.username }}
+                </span>
+
+                <form method="post"
+                      action="{% url 'student_logout' %}"
+                      class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-light">
+                        Logout
+                    </button>
                 </form>
+            </div>
+
             {% elif user.invigilator %}
-                <a href="{% url 'invigilator_dashboard' %}">My Dashboard</a> |
-                <form method="post" action="{% url 'invigilator_logout' %}" style="display:inline;">
+
+            <div class="nav-links">
+                <a href="/" class="nav-item">Home</a>
+                <a href="{% url 'invigilator_dashboard' %}" class="nav-item">
+                    My Dashboard
+                </a>
+            </div>
+
+            <div class="nav-user">
+                <span class="user-badge invigilator">
+                    Staff: {{ user.username }}
+                </span>
+
+                <form method="post"
+                      action="{% url 'invigilator_logout' %}"
+                      class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-light">
+                        Logout
+                    </button>
                 </form>
+            </div>
+
             {% endif %}
+
         {% else %}
-            <a href="{% url 'exam_officer_login' %}">Exam Officer Login</a> |
-            <a href="{% url 'student_login' %}">Student Login</a> |
-            <a href="{% url 'invigilator_login' %}">Invigilator Login</a>
+
+        <div class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/#portals" class="nav-item">About</a>
+        </div>
+
         {% endif %}
-    </nav>
 
-    <hr>
+    </div>
+</nav>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+{% endif %}
 
-    {% block content %}
-    {% endblock %}
+{% endblock %}
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            {% if user.is_authenticated %}
+                <p>&copy; 2026 Academic Exam Allocation System &bull; Secure Scheduling & Seating Engine</p>
+            {% else %}
+                <div class="footer-content-public">
+                    <div class="footer-section">
+                        <h4>Bayero University Kano</h4>
+                        <p>Examination Venue and Seat Allocation System</p>
+                    </div>
+                    <div class="footer-section footer-motto">
+                        <p class="motto-text">Knowledge | Service | Excellence</p>
+                    </div>
+                    <div class="footer-section">
+                        <p>&copy; 2026 Bayero University Kano. All rights reserved.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </footer>
 
 </body>
 </html>

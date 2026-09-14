@@ -1,21 +1,189 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Welcome | Exam Allocation System{% endblock %}
 
 {% block content %}
-<h2>Welcome</h2>
-<p>This system manages exam scheduling, venue and invigilator allocation, and seating for the Faculty of Computing.</p>
+<style>
+.homepage-hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #2d4a9c 100%);
+    color: white;
+    padding: 3rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+.homepage-hero h1 {
+    color: white;
+    margin: 0 0 1rem 0;
+    border: none;
+    padding: 0;
+}
+.homepage-hero p {
+    color: rgba(255,255,255,0.95);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+.feature-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.feature-card:hover {
+    border-color: #4f46e5;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+}
+.feature-card h3 {
+    color: #0f172a;
+    margin: 1rem 0 0.5rem 0;
+    border: none;
+    padding: 0;
+}
+.feature-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1.5rem 0;
+}
+.notice-box {
+    background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
+    border-left: 4px solid #4f46e5;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+.notice-box h3 {
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+    border: none;
+    padding: 0;
+}
+.notice-box p {
+    color: #1e293b;
+    margin: 0;
+}
+.portals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+.portal-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.portal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+.portal-header {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+.portal-header.student { background: linear-gradient(135deg, #10b981, #059669); }
+.portal-header.officer { background: linear-gradient(135deg, #4f46e5, #2d4a9c); }
+.portal-header.invigilator { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.portal-card h3 { margin: 1.25rem 1.5rem 0.5rem; color: #0f172a; border: none; padding: 0; }
+.portal-card p { margin: 0 1.5rem 1.25rem; color: #64748b; font-size: 0.9rem; }
+.portal-card .btn { margin: 0 1.5rem 1.5rem; width: calc(100% - 3rem); }
+</style>
 
-<h3>Choose where you'd like to go</h3>
-<ul style="list-style:none; padding:0;">
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="/dashboard/" class="btn">Exam Officer Dashboard</a>
-    </li>
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="{% url 'student_login' %}" class="btn">Student Login</a>
-    </li>
-    <li style="background:none; border:none; padding:0.4rem 0; margin:0;">
-        <a href="{% url 'invigilator_login' %}" class="btn">Invigilator Login</a>
-    </li>
-</ul>
+<!-- Hero Section -->
+<div class="homepage-hero">
+    <h1>Welcome to the Examination Venue and Seat Allocation System</h1>
+    <p>Bayero University Kano - Faculty of Computing and Information Technology</p>
+    <p>Our intelligent system helps students access their examination venues and seat allocations efficiently. Simply log in to your portal to view your assigned examination details, venue locations, and seat numbers.</p>
+    <div class="hero-buttons">
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <a href="/dashboard/" class="btn btn-primary btn-lg">Go to Officer Dashboard</a>
+            {% elif user.student %}
+                <a href="{% url 'student_dashboard' %}" class="btn btn-primary btn-lg">Go to Student Dashboard</a>
+            {% elif user.invigilator %}
+                <a href="{% url 'invigilator_dashboard' %}" class="btn btn-primary btn-lg">Go to Invigilator Dashboard</a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'student_login' %}" class="btn btn-primary btn-lg">Student Login</a>
+            <a href="{% url 'exam_officer_login' %}" class="btn btn-secondary btn-lg">Officer Login</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- System Features -->
+<h2 style="text-align: center; margin: 2.5rem 0 1.5rem 0; border: none; padding: 0; font-size: 2rem;">System Features</h2>
+<div class="features-grid">
+    <div class="feature-card">
+        <h3>View Examination Venues</h3>
+        <p>Check the examination venues assigned to your registered courses.</p>
+        <a href="{% url 'session_list' %}" class="btn btn-primary" style="width: 100%;">View Venues</a>
+    </div>
+    <div class="feature-card">
+        <h3>Seat Allocation Details</h3>
+        <p>Access your examination seat numbers and specific venue locations.</p>
+        <a href="{% url 'session_list' %}" class="btn btn-primary" style="width: 100%;">Check Seats</a>
+    </div>
+    <div class="feature-card">
+        <h3>Registered Courses</h3>
+        <p>View all courses you are registered to sit examinations for this session.</p>
+        <a href="{% url 'student_login' %}" class="btn btn-primary" style="width: 100%;">Login to View</a>
+    </div>
+    <div class="feature-card">
+        <h3>Announcements</h3>
+        <p>Stay updated with important examination notifications and announcements.</p>
+        <a href="/" class="btn btn-primary" style="width: 100%;">View Announcements</a>
+    </div>
+</div>
+
+<!-- Important Notice -->
+<div class="notice-box">
+    <h3>Important Notice</h3>
+    <p>Please ensure you check your examination venue and seat allocation <strong>before</strong> your scheduled examination. Arrive at your assigned venue at least 15 minutes before the commencement time. Bring all required examination materials and a valid student ID.</p>
+</div>
+
+<!-- Portal Selection -->
+<h2 style="text-align: center; margin: 2.5rem 0 1.5rem 0; border: none; padding: 0; font-size: 2rem;">Select Your Portal</h2>
+<div class="portals-grid">
+    <div class="portal-card">
+        <div class="portal-header student">👤</div>
+        <h3>Student Portal</h3>
+        <p>View your registered examination courses, assigned venues, and seat numbers.</p>
+        <a href="{% url 'student_login' %}" class="btn btn-primary">Student Login</a>
+    </div>
+    <div class="portal-card">
+        <div class="portal-header officer">⚙️</div>
+        <h3>Examination Officer Portal</h3>
+        <p>Manage schedules, venues, students, and execute the allocation engine.</p>
+        <a href="{% url 'exam_officer_login' %}" class="btn btn-primary">Officer Login</a>
+    </div>
+    <div class="portal-card">
+        <div class="portal-header invigilator">👁️</div>
+        <h3>Invigilator Portal</h3>
+        <p>Check your assigned invigilation sessions, dates, times, and venue locations.</p>
+        <a href="{% url 'invigilator_login' %}" class="btn btn-primary">Invigilator Login</a>
+    </div>
+</div>
+
+
 {% endblock %}

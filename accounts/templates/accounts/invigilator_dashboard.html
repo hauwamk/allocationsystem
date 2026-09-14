@@ -3,25 +3,55 @@
 {% block title %}My Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome, {{ invigilator.full_name }}</h2>
-<p>Staff ID: {{ invigilator.staff_id }}</p>
+
+<div class="dash-banner">
+    <h2>Welcome, {{ invigilator.full_name }}</h2>
+    <p>Staff ID: {{ invigilator.staff_id }}</p>
+    <p>Thank you for your service as an invigilator.</p>
+</div>
+
+<div class="stat-cards">
+    <div class="stat-card blue">
+        <div class="stat-icon">📋</div>
+        <div class="stat-label">Total Sessions</div>
+        <div class="stat-value">{{ total_sessions }}</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-label">Completed</div>
+        <div class="stat-value">{{ completed_count }}</div>
+    </div>
+    <div class="stat-card amber">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-label">Remaining</div>
+        <div class="stat-value">{{ remaining_count }}</div>
+    </div>
+</div>
 
 <h3>My Assigned Sessions</h3>
 
-{% if sessions %}
+{% if session_rows %}
 <table border="1">
     <tr>
         <th>Course</th>
         <th>Date</th>
         <th>Time</th>
         <th>Venue</th>
+        <th>Status</th>
     </tr>
-    {% for session in sessions %}
+    {% for row in session_rows %}
     <tr>
-        <td>{{ session.exam.course.course_code }}</td>
-        <td>{{ session.exam.exam_date }}</td>
-        <td>{{ session.exam.exam_time }}</td>
-        <td>{{ session.venue.venue_name }}</td>
+        <td>{{ row.session.exam.course.course_code }}</td>
+        <td>{{ row.session.exam.exam_date }}</td>
+        <td>{{ row.session.exam.exam_time }}</td>
+        <td>{{ row.session.venue.venue_name }}</td>
+        <td>
+            {% if row.is_completed %}
+                <span class="badge badge-completed">Completed</span>
+            {% else %}
+                <span class="badge badge-upcoming">Upcoming</span>
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
 </table>
@@ -29,7 +59,7 @@
 <p>You have no assigned sessions yet.</p>
 {% endif %}
 
-<form method="post" action="{% url 'invigilator_logout' %}">
+<form method="post" action="{% url 'invigilator_logout' %}" style="margin-top:1rem;">
     {% csrf_token %}
     <button type="submit" class="link-button">Logout</button>
 </form>

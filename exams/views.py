@@ -3,6 +3,7 @@ from django.contrib import messages
 from accounts.decorators import staff_required
 from .models import Exam
 from .forms import ExamForm
+from .clash_service import find_clashes
 from allocations.services import allocate_exam, allocate_semester
 
 
@@ -15,6 +16,26 @@ def exam_list(request):
     return render(request, "exams/exam_list.html", context)
 
 
+def _warn_about_clashes(request, exam):
+    """
+    Shared helper: runs clash detection on the given exam and, for every
+    clash found, shows a warning message naming the student and the two
+    conflicting courses. This is a WARNING, not a hard block — the exam
+    still gets saved either way, since the officer might already be
+    aware and plan to fix the timetable, or move the student manually.
+    """
+    clashes = find_clashes(exam)
+    for clash in clashes:
+        messages.warning(
+            request,
+            f"Schedule clash: {clash['student'].registration_number} is "
+            f"registered for both {clash['exam_a'].course.course_code} and "
+            f"{clash['exam_b'].course.course_code}, which are scheduled at "
+            f"the same date and time."
+        )
+    return clashes
+
+
 @staff_required
 def edit_exam(request, exam_id):
     exam = get_object_or_404(Exam, id=exam_id)
@@ -23,6 +44,9 @@ def edit_exam(request, exam_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Exam updated successfully.")
+            # Check for clashes AFTER saving, since the date/time may have
+            # just changed to something that now conflicts with another exam.
+            _warn_about_clashes(request, exam)
             return redirect("exam_list")
     else:
         form = ExamForm(instance=exam)
@@ -45,8 +69,11 @@ def add_exam(request):
     if request.method == "POST":
         form = ExamForm(request.POST)
         if form.is_valid():
-            form.save()
+            exam = form.save()
             messages.success(request, "Exam added successfully.")
+            # Check for clashes right after creating the exam, so the
+            # officer sees the warning immediately, not days later.
+            _warn_about_clashes(request, exam)
             return redirect("exam_list")
     else:
         form = ExamForm()
