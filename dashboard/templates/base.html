@@ -34,130 +34,75 @@
         </div>
 
         <!-- Global Navigation -->
+        {% block global_nav %}
+        <nav id="mainNav" class="app-nav">
+            <div class="nav-inner-container">
 
-   <!-- Global Navigation -->
-{% block global_nav %}
+                {% if user.is_authenticated %}
 
-{% if request.path == "/" %}
+                    {% if user.is_staff %}
+                    <div class="nav-links">
+                        <a href="/" class="nav-item">Home</a>
+                        <a href="/dashboard/" class="nav-item">Dashboard</a>
+                        <a href="/students/" class="nav-item">Students</a>
+                        <a href="/courses/" class="nav-item">Courses</a>
+                        <a href="/venues/" class="nav-item">Venues</a>
+                        <a href="/invigilators/" class="nav-item">Invigilators</a>
+                        <a href="/exams/" class="nav-item">Exams</a>
+                        <a href="/exams/timetables/" class="nav-item">Timetable</a>
+                        <a href="/allocations/" class="nav-item">Allocations</a>
+                        <a href="{% url 'import_hub' %}" class="nav-item">Import Hub</a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'exam_officer_list' %}" class="nav-item">Exam Officers</a>
+                        {% endif}
+                    </div>
+                    <div class="nav-user">
+                        <span class="user-badge admin">Officer: {{ user.username }}</span>
+                        <form method="post" action="{% url 'exam_officer_logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                        </form>
+                    </div>
 
-<!-- HOME PAGE NAVIGATION -->
-<nav id="mainNav" class="app-nav">
-    <div class="nav-inner-container">
+                    {% elif user.student %}
+                    <div class="nav-links">
+                        <a href="/" class="nav-item">Home</a>
+                        <a href="{% url 'student_dashboard' %}" class="nav-item">My Dashboard</a>
+                    </div>
+                    <div class="nav-user">
+                        <span class="user-badge student">Student: {{ user.username }}</span>
+                        <form method="post" action="{% url 'student_logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                        </form>
+                    </div>
 
-        <div class="nav-links">
-            <a href="/" class="nav-item">Home</a>
-            <a href="/#portals" class="nav-item">About</a>
-        </div>
+                    {% elif user.invigilator %}
+                    <div class="nav-links">
+                        <a href="/" class="nav-item">Home</a>
+                        <a href="{% url 'invigilator_dashboard' %}" class="nav-item">My Dashboard</a>
+                    </div>
+                    <div class="nav-user">
+                        <span class="user-badge invigilator">Staff: {{ user.username }}</span>
+                        <form method="post" action="{% url 'invigilator_logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                        </form>
+                    </div>
+                    {% endif %}
 
-    </div>
-</nav>
+                {% else %}
+                    <div class="nav-links">
+                        <a href="/" class="nav-item">Home</a>
+                        <a href="{% url 'student_login' %}" class="nav-item">Student Login</a>
+                        <a href="{% url 'invigilator_login' %}" class="nav-item">Invigilator Login</a>
+                        <a href="{% url 'exam_officer_login' %}" class="nav-item">Exam Officer Login</a>
+                    </div>
+                {% endif %}
 
-{% elif request.path != "/dashboard/" %}
-
-<!-- OTHER PAGES NAVIGATION -->
-<nav id="mainNav" class="app-nav">
-
-    <div class="nav-inner-container">
-
-        {% if user.is_authenticated %}
-
-            {% if user.is_staff %}
-
-            <div class="nav-links">
-                <a href="/" class="nav-item">Home</a>
-                <a href="/dashboard/" class="nav-item">Dashboard</a>
-                <a href="/students/" class="nav-item">Students</a>
-                <a href="/courses/" class="nav-item">Courses</a>
-                <a href="/venues/" class="nav-item">Venues</a>
-                <a href="/invigilators/" class="nav-item">Invigilators</a>
-                <a href="/exams/" class="nav-item">Exams</a>
-                <a href="/allocations/" class="nav-item">Allocations</a>
-                <a href="{% url 'import_hub' %}" class="nav-item">Import Hub</a>
             </div>
-
-            <div class="nav-user">
-                <span class="user-badge admin">
-                    Officer: {{ user.username }}
-                </span>
-
-                <form method="post"
-                      action="{% url 'exam_officer_logout' %}"
-                      class="logout-form">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="btn btn-sm btn-outline-light">
-                        Logout
-                    </button>
-                </form>
-            </div>
-
-            {% elif user.student %}
-
-            <div class="nav-links">
-                <a href="/" class="nav-item">Home</a>
-                <a href="{% url 'student_dashboard' %}" class="nav-item">
-                    My Dashboard
-                </a>
-            </div>
-
-            <div class="nav-user">
-                <span class="user-badge student">
-                    Student: {{ user.username }}
-                </span>
-
-                <form method="post"
-                      action="{% url 'student_logout' %}"
-                      class="logout-form">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="btn btn-sm btn-outline-light">
-                        Logout
-                    </button>
-                </form>
-            </div>
-
-            {% elif user.invigilator %}
-
-            <div class="nav-links">
-                <a href="/" class="nav-item">Home</a>
-                <a href="{% url 'invigilator_dashboard' %}" class="nav-item">
-                    My Dashboard
-                </a>
-            </div>
-
-            <div class="nav-user">
-                <span class="user-badge invigilator">
-                    Staff: {{ user.username }}
-                </span>
-
-                <form method="post"
-                      action="{% url 'invigilator_logout' %}"
-                      class="logout-form">
-                    {% csrf_token %}
-                    <button type="submit"
-                            class="btn btn-sm btn-outline-light">
-                        Logout
-                    </button>
-                </form>
-            </div>
-
-            {% endif %}
-
-        {% else %}
-
-        <div class="nav-links">
-            <a href="/" class="nav-item">Home</a>
-            <a href="/#portals" class="nav-item">About</a>
-        </div>
-
-        {% endif %}
-
-    </div>
-</nav>
-
-{% endif %}
-
-{% endblock %}
+        </nav>
+        {% endblock %}
     </header>
 
     <!-- Main Content Area -->

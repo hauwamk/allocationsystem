@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ timetable.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ timetable.name }}</h2>
+<p>Status: <strong>{{ timetable.get_status_display }}</strong></p>
+
+<h3>Upload Exams</h3>
+<p>CSV columns: Course Code, Date (YYYY-MM-DD), Time (HH:MM, 24-hour), Duration (minutes).</p>
+<form method="post" action="{% url 'timetable_upload_csv' timetable.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ upload_form.as_p }}
+    <button type="submit" class="btn">Upload</button>
+</form>
+
+<h3>Exams in this Timetable ({{ exams|length }})</h3>
+{% if exams %}
+<table border="1">
+    <tr><th>Course</th><th>Date</th><th>Time</th><th>Duration</th></tr>
+    {% for exam in exams %}
+    <tr>
+        <td>{{ exam.course.course_code }}</td>
+        <td>{{ exam.exam_date }}</td>
+        <td>{{ exam.exam_time }}</td>
+        <td>{{ exam.duration }} mins</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No exams uploaded yet.</p>
+{% endif %}
+
+{% if timetable.status == "DRAFT" %}
+<form method="post" action="{% url 'publish_timetable' timetable.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn">Publish Timetable</button>
+</form>
+<p>Publishing checks every exam in this batch for clashes first — it will refuse to publish (and show you the clashes) if any student ends up with two exams at once.</p>
+{% endif %}
+
+<p><a href="{% url 'timetable_list' %}">Back to Timetables</a></p>
+{% endblock %}

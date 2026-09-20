@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Timetables{% endblock %}
+
+{% block content %}
+<h2>Exam Timetables</h2>
+<a href="{% url 'timetable_create' %}" class="btn">+ New Timetable</a>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Exams</th>
+        <th>Created</th>
+        <th>Action</th>
+    </tr>
+    {% for timetable in timetables %}
+    <tr>
+        <td>{{ timetable.name }}</td>
+        <td>{{ timetable.get_status_display }}</td>
+        <td>{{ timetable.exams.count }}</td>
+        <td>{{ timetable.created_at|date:"d M Y" }}</td>
+        <td><a href="{% url 'timetable_detail' timetable.id %}">Open</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No timetables yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

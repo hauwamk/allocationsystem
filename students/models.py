@@ -10,10 +10,10 @@ class Student(models.Model):
         ("400", "400 Level"),
     ]
     DEPARTMENT_CHOICES = [
-        ("CS", "Computer Science"),
-        ("SE", "Software Engineering"),
-        ("IT", "Information Technology"),
-        ("CY", "Cyber Security"),
+        ("COM", "Computer Science"),
+        ("SWE", "Software Engineering"),
+        ("IFT", "Information Technology"),
+        ("CBS", "Cyber Security"),
     ]
 
     GENDER_CHOICES = [
@@ -26,7 +26,7 @@ class Student(models.Model):
     registration_number = models.CharField(max_length=20, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    department = models.CharField(max_length=2, choices=DEPARTMENT_CHOICES)
+    department = models.CharField(max_length=3, choices=DEPARTMENT_CHOICES)
     level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     email = models.EmailField(blank=True, null=True)

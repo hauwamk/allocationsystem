@@ -53,9 +53,12 @@
         <td>{{ row.exam.exam_date }}</td>
         <td>{{ row.exam.exam_time }}</td>
         {% if row.can_view_venue %}
+            {# Allocated AND within the reveal window - show the real info. #}
+
             <td>{{ row.allocation.exam_session.venue.venue_name }}</td>
             <td>{{ row.allocation.seating_number }}</td>
         {% elif row.allocation %}
+             {# Allocated, but too early to reveal. #}
             <td colspan="2">Check 1 hour before the exam</td>
         {% else %}
             <td colspan="2">Not yet allocated</td>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}New Timetable{% endblock %}
+
+{% block content %}
+<h2>New Timetable</h2>
+<p>Give this batch a name (e.g. "2026 First Semester"). It starts as a Draft — you'll upload its exams next, then publish it once it's clash-free.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Create Draft</button>
+</form>
+{% endblock %}

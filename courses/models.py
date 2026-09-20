@@ -8,10 +8,11 @@ class Course(models.Model):
         ("400", "400 Level"),
     ]
     DEPARTMENT_CHOICES = [
-        ("CS", "Computer Science"),
-        ("SE", "Software Engineering"),
-        ("IT", "Information Technology"),
-        ("CY", "Cyber Security"),
+        ("COM", "Computer Science"),
+        ("SWE", "Software Engineering"),
+        ("IFT", "Information Technology"),
+        ("CBS", "Cyber Security"),
+        ("ALL", "All Departments"),
     ]
 
     SEMESTER_CHOICES = [
@@ -21,7 +22,7 @@ class Course(models.Model):
 
     course_code = models.CharField(max_length=10, unique=True)
     course_title = models.CharField(max_length=100)
-    department = models.CharField(max_length=2, choices=DEPARTMENT_CHOICES)
+    department = models.CharField(max_length=3, choices=DEPARTMENT_CHOICES)
     level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
     semester = models.CharField(max_length=10, choices=SEMESTER_CHOICES)
 

@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 
 from django.contrib.auth.models import User
@@ -58,4 +57,3 @@ class VenueRevealTests(TestCase):
         response = self.client.get(reverse("student_dashboard"))
 
         self.assertContains(response, "Hall A")
-

@@ -3,12 +3,13 @@ import re
 from io import TextIOWrapper
 
 from django.contrib import messages
-from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 
 from accounts.decorators import staff_required
 from .forms import StudentEditForm, StudentImportForm, RegisterCourseForm
 from .models import Student, Registration
+
+from django.shortcuts import get_object_or_404, redirect
 
 
 def _normalize_header(header):
@@ -86,8 +87,6 @@ def import_students(request):
                         user.save()
                         student.user = user
                         student.save()
-
-                    if created:
                         imported += 1
                     else:
                         skipped += 1
@@ -105,7 +104,6 @@ def import_students(request):
         "students/importstudentslist.html",
         {"form": form},
     )
-
 @staff_required
 def delete_student(request, id):
     student = get_object_or_404(Student, id=id)
@@ -126,6 +124,27 @@ def edit_student(request, id):
 
         if form.is_valid():
             form.save()
+
+            # Keep the student's login in sync with their registration
+            # number. Username/password were only ever set ONCE, at
+            # creation — so if an officer corrects a student's reg
+            # number here (e.g. fixing it to the new official format),
+            # the login must be updated to match, or the student gets
+            # locked out under their old (now-wrong) credentials.
+            from django.contrib.auth.models import User
+            if student.user:
+                student.user.username = student.registration_number
+                student.user.set_password(student.registration_number)
+                student.user.save()
+            else:
+                # Safety net: an older student record with no linked
+                # login yet — create one now, same as add_student does.
+                user, _ = User.objects.get_or_create(username=student.registration_number)
+                user.set_password(student.registration_number)
+                user.save()
+                student.user = user
+                student.save()
+
             messages.success(request, "Student updated successfully.")
             return redirect("students_list")
 

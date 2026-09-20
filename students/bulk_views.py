@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import render, redirect
 
 from accounts.decorators import staff_required
@@ -12,6 +13,9 @@ def bulk_register(request):
     Step 1 (no filters yet): show a form to pick department + level + semester.
     Step 2 (filters present, GET): show matching courses and matching
         students, all pre-checked, so the officer can uncheck exceptions.
+        Courses shown include both courses tied to the exact department
+        AND courses marked "All Departments" (shared courses every
+        department's students take, common at Level 100/200).
     Step 3 (POST): create a Registration for every checked student x
         checked course combination. get_or_create means running this
         again later (e.g. after adding late students) is safe — no
@@ -42,7 +46,15 @@ def bulk_register(request):
         return redirect("students_list")
 
     if department and level and semester:
-        courses = Course.objects.filter(department=department, level=level, semester=semester)
+        # Match courses belonging to this exact department, OR courses
+        # marked "ALL" (shared across every department) — this is what
+        # lets a Level 100/200 shared course show up for every department's
+        # bulk registration run, not just one.
+        courses = Course.objects.filter(
+            Q(department=department) | Q(department="ALL"),
+            level=level,
+            semester=semester,
+        )
         students = Student.objects.filter(department=department, level=level)
         return render(request, "students/bulk_register_confirm.html", {
             "department": department,

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Officers{% endblock %}
+
+{% block content %}
+<h2>Exam Officer Accounts</h2>
+<a href="{% url 'create_exam_officer' %}" class="btn">+ New Exam Officer</a>
+
+<table border="1">
+    <tr><th>Username</th><th>Active</th></tr>
+    {% for officer in officers %}
+    <tr>
+        <td>{{ officer.username }}</td>
+        <td>{{ officer.is_active|yesno:"Yes,No" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2">No exam officers created yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

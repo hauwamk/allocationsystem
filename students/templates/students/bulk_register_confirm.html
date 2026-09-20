@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Confirm Bulk Registration</h2>
 <p>{{ department }} — Level {{ level }} — {{ semester }} Semester</p>
-<p>All students and courses below are pre-checked. Uncheck anyone with a carryover or exemption before submitting — you can handle their individual exceptions afterward on their own "Register" page.</p>
+<p>All students and courses below are pre-checked. Courses marked "All Departments" are shared courses taken by every department at this level. Uncheck anyone with a carryover or exemption before submitting — you can handle their individual exceptions afterward on their own "Register" page.</p>
 
 <form method="post">
     {% csrf_token %}
@@ -16,12 +16,13 @@
     <h3>Courses ({{ courses|length }})</h3>
     {% if courses %}
     <table border="1">
-        <tr><th></th><th>Code</th><th>Title</th></tr>
+        <tr><th></th><th>Code</th><th>Title</th><th>Department</th></tr>
         {% for course in courses %}
         <tr>
             <td><input type="checkbox" name="courses" value="{{ course.id }}" checked></td>
             <td>{{ course.course_code }}</td>
             <td>{{ course.course_title }}</td>
+            <td>{{ course.get_department_display }}</td>
         </tr>
         {% endfor %}
     </table>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}New Exam Officer{% endblock %}
+
+{% block content %}
+<h2>Create Exam Officer Account</h2>
+<p>This account will be able to manage students, courses, venues, invigilators, exams, and allocations — but will NOT be able to create other Exam Officer accounts. Only a Superadmin can do that.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Create Account</button>
+</form>
+
+<p><a href="{% url 'exam_officer_list' %}">Back to Exam Officers</a></p>
+{% endblock %}
