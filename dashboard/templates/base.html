@@ -52,9 +52,10 @@
                         <a href="/exams/timetables/" class="nav-item">Timetable</a>
                         <a href="/allocations/" class="nav-item">Allocations</a>
                         <a href="{% url 'import_hub' %}" class="nav-item">Import Hub</a>
+                        <a href="{% url 'department_list' %}" class="nav-item">Departments</a>
                         {% if user.is_superuser %}
                             <a href="{% url 'exam_officer_list' %}" class="nav-item">Exam Officers</a>
-                        {% endif}
+                        {% endif %}
                     </div>
                     <div class="nav-user">
                         <span class="user-badge admin">Officer: {{ user.username }}</span>

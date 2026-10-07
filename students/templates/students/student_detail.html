@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.registration_number }}{% endblock %}
+
+{% block content %}
+<h2>Student Details</h2>
+
+<div class="card" style="text-align:left; padding:1.5rem; margin-bottom:1.5rem;">
+    <p><strong>Registration Number:</strong> {{ student.registration_number }}</p>
+    <p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+    <p><strong>Department:</strong> {{ student.get_department_display }}</p>
+    <p><strong>Level:</strong> {{ student.get_level_display }}</p>
+    <p><strong>Gender:</strong> {{ student.get_gender_display }}</p>
+    {% if student.email %}<p><strong>Email:</strong> {{ student.email }}</p>{% endif %}
+</div>
+
+<h3>Registered Courses ({{ registrations|length }})</h3>
+{% if registrations %}
+<table border="1">
+    <tr><th>Code</th><th>Title</th><th>Semester</th></tr>
+    {% for reg in registrations %}
+    <tr>
+        <td>{{ reg.course.course_code }}</td>
+        <td>{{ reg.course.course_title }}</td>
+        <td>{{ reg.course.semester }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Not registered for any courses yet.</p>
+{% endif %}
+
+<h3>Exam Allocations ({{ allocations|length }})</h3>
+{% if allocations %}
+<table border="1">
+    <tr><th>Course</th><th>Date</th><th>Venue</th><th>Seat</th></tr>
+    {% for alloc in allocations %}
+    <tr>
+        <td>{{ alloc.exam_session.exam.course.course_code }}</td>
+        <td>{{ alloc.exam_session.exam.exam_date }}</td>
+        <td>{{ alloc.exam_session.venue.venue_name }}</td>
+        <td>{{ alloc.seating_number }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No exam allocations yet.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'edit_student' id=student.id %}">Edit</a> |
+    <a href="{% url 'students_list' %}">Back to Students</a>
+</p>
+{% endblock %}

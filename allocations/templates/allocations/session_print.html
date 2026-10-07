@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seating Chart - {{ session.exam.course.course_code }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; color: #111; }
+        h1 { font-size: 1.4rem; margin-bottom: 0.2rem; }
+        .meta { margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .meta p { margin: 0.2rem 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #333; padding: 0.5rem 0.8rem; text-align: left; font-size: 0.9rem; }
+        th { background: #f0f0f0; }
+        .print-button { margin-bottom: 1.5rem; padding: 0.5rem 1.2rem; font-size: 0.9rem; cursor: pointer; }
+        .signature { margin-top: 3rem; }
+        .signature-line { display: inline-block; width: 220px; border-bottom: 1px solid #333; margin-right: 0.5rem; }
+        @media print {
+            .print-button { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-button" onclick="window.print()">Print this page</button>
+
+    <h1>Examination Seating Chart</h1>
+    <div class="meta">
+        <p><strong>Course:</strong> {{ session.exam.course.course_code }} — {{ session.exam.course.course_title }}</p>
+        <p><strong>Venue:</strong> {{ session.venue.venue_name }}</p>
+        <p><strong>Date:</strong> {{ session.exam.exam_date }} | <strong>Time:</strong> {{ session.exam.exam_time }}</p>
+        <p><strong>Invigilator:</strong> {{ session.invigilator.full_name }} ({{ session.invigilator.staff_id }})</p>
+        <p><strong>Total Students:</strong> {{ allocations|length }}</p>
+    </div>
+
+    <table>
+        <tr>
+            <th>Seat</th>
+            <th>Registration Number</th>
+            <th>Name</th>
+        </tr>
+        {% for alloc in allocations %}
+        <tr>
+            <td>{{ alloc.seating_number }}</td>
+            <td>{{ alloc.student.registration_number }}</td>
+            <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No students seated in this session.</td></tr>
+        {% endfor %}
+    </table>
+
+    <div class="signature">
+        <span class="signature-line"></span> Invigilator Signature
+        <span class="signature-line" style="margin-left: 2rem;"></span> Date
+    </div>
+
+</body>
+</html>

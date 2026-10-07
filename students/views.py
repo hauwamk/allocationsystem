@@ -8,6 +8,7 @@ from django.shortcuts import render
 from accounts.decorators import staff_required
 from .forms import StudentEditForm, StudentImportForm, RegisterCourseForm
 from .models import Student, Registration
+from allocations.models import Allocation
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -190,3 +191,21 @@ def register_courses(request, id):
         form = RegisterCourseForm(initial={"courses": current_course_ids})
 
     return render(request, "students/register_courses.html", {"form": form, "student": student})
+
+@staff_required
+def student_detail(request, id):
+    """
+    View page: a single student's full profile in one place — their
+    basic info, every course they're registered for, and every exam
+    seat they've actually been allocated.
+    """
+    student = get_object_or_404(Student, id=id)
+    registrations = Registration.objects.filter(student=student).select_related("course")
+    allocations = Allocation.objects.filter(student=student).select_related(
+        "exam_session__exam__course", "exam_session__venue"
+    )
+    return render(request, "students/student_detail.html", {
+        "student": student,
+        "registrations": registrations,
+        "allocations": allocations,
+    })

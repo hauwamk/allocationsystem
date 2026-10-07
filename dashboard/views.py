@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render
 from accounts.decorators import staff_required
 from students.models import Student
@@ -28,3 +28,40 @@ def dashboard(request):
         'department_counts': department_counts
     }
     return render(request, 'dashboard/dashboard.html', context)
+
+
+@staff_required
+def department_list(request):
+    """
+    Read-only overview of the fixed departments. Department isn't its
+    own database table — this just loops over the choices already
+    defined on Student, with a student/course count for each.
+    """
+    departments = []
+    for code, name in Student.DEPARTMENT_CHOICES:
+        departments.append({
+            "code": code,
+            "name": name,
+            "student_count": Student.objects.filter(department=code).count(),
+            "course_count": Course.objects.filter(department=code).count(),
+        })
+    return render(request, "dashboard/department_list.html", {"departments": departments})
+
+
+@staff_required
+def department_detail(request, code):
+    """
+    One department's students and courses. `code` is the short code
+    (e.g. 'SWE'), not a database ID, since Department isn't a real model.
+    Courses tagged "ALL" (shared across every department) are included
+    here too, since students in this department do take them.
+    """
+    department_name = dict(Student.DEPARTMENT_CHOICES).get(code, code)
+    students = Student.objects.filter(department=code)
+    courses = Course.objects.filter(Q(department=code) | Q(department="ALL"))
+    return render(request, "dashboard/department_detail.html", {
+        "department_code": code,
+        "department_name": department_name,
+        "students": students,
+        "courses": courses,
+    })

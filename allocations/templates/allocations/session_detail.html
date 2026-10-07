@@ -7,6 +7,8 @@
 <h2>{{ session.exam.course.course_code }} — {{ session.venue.venue_name }}</h2>
 <p>Date: {{ session.exam.exam_date }} | Invigilator: {{ session.invigilator }}</p>
 
+<p><a href="{% url 'session_print' session.id %}" target="_blank" class="btn">Print Seating Chart</a></p>
+
 <table border="1">
     <tr>
         <th>Seat</th>

@@ -32,6 +32,7 @@ Students
             <td>{{ student.get_department_display }}</td>
             <td>{{ student.get_gender_display }}</td>
             <td>
+                <a href="{% url 'student_detail' id=student.id %}">View</a>
                 <a href="{% url 'delete_student' id=student.id %}">Delete</a>
                 <a href="{% url 'edit_student' id=student.id %}">Edit</a>
                 <a href="{% url 'register_courses' id=student.id %}">Register</a>
