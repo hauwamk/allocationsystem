@@ -1,23 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}
-Delete Course
-{% endblock %}
+{% block title %}Delete Course | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Confirm Deletion</h2>
+        <p>This action is irreversible and will remove this course from curriculum offerings.</p>
+    </div>
+</div>
 
-<h2>Delete Course</h2>
+<div class="form-card" style="border-color: var(--error-border);">
+    <h3 style="margin-top: 0; color: var(--error);">Delete Course Offering</h3>
+    <p style="margin-bottom: 1.5rem; color: var(--text-main);">
+        Are you sure you want to permanently delete course <strong>{{ course.course_code }}: {{ course.course_title }}</strong>?
+    </p>
 
-<p>
-    Are you sure you want to delete
-    <strong>{{ course.course_code }} - {{ course.course_title }}</strong>?
-</p>
-
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
-</form>
-
-<a href="{% url 'course_list' %}">Cancel</a>
-
+    <form method="post" style="margin: 0;">
+        {% csrf_token %}
+        <div class="form-actions" style="margin: 0;">
+            <button type="submit" class="btn btn-danger">Yes, Permanently Delete</button>
+            <a href="{% url 'course_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

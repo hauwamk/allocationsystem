@@ -1,43 +1,93 @@
 {% extends "base.html" %}
 
-{% block title %}{{ timetable.name }}{% endblock %}
+{% block title %}{{ timetable.name }} | Timetable Batch{% endblock %}
 
 {% block content %}
-<h2>{{ timetable.name }}</h2>
-<p>Status: <strong>{{ timetable.get_status_display }}</strong></p>
-
-<h3>Upload Exams</h3>
-<p>CSV columns: Course Code, Date (YYYY-MM-DD), Time (HH:MM, 24-hour), Duration (minutes).</p>
-<form method="post" action="{% url 'timetable_upload_csv' timetable.id %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ upload_form.as_p }}
-    <button type="submit" class="btn">Upload</button>
-</form>
-
-<h3>Exams in this Timetable ({{ exams|length }})</h3>
-{% if exams %}
-<table border="1">
-    <tr><th>Course</th><th>Date</th><th>Time</th><th>Duration</th></tr>
-    {% for exam in exams %}
-    <tr>
-        <td>{{ exam.course.course_code }}</td>
-        <td>{{ exam.exam_date }}</td>
-        <td>{{ exam.exam_time }}</td>
-        <td>{{ exam.duration }} mins</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p>No exams uploaded yet.</p>
-{% endif %}
+<div class="page-header">
+    <div>
+        <h2>{{ timetable.name }}</h2>
+        <p>
+            Status: 
+            {% if timetable.status == "PUBLISHED" %}
+                <span class="badge badge-completed">Published</span>
+            {% elif timetable.status == "DRAFT" %}
+                <span class="badge badge-draft">Draft</span>
+            {% else %}
+                <span class="badge" style="background: var(--surface-subtle); color: var(--text-muted);">{{ timetable.get_status_display }}</span>
+            {% endif %}
+            &bull; Total Exams: <strong>{{ exams|length }}</strong>
+        </p>
+    </div>
+    <div class="page-actions">
+        {% if timetable.status == "DRAFT" %}
+            <form method="post" action="{% url 'publish_timetable' timetable.id %}" style="display: inline-block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">🚀 Publish Timetable</button>
+            </form>
+        {% endif %}
+        <a href="{% url 'timetable_list' %}" class="btn btn-secondary">&larr; Back to Timetables</a>
+    </div>
+</div>
 
 {% if timetable.status == "DRAFT" %}
-<form method="post" action="{% url 'publish_timetable' timetable.id %}">
-    {% csrf_token %}
-    <button type="submit" class="btn">Publish Timetable</button>
-</form>
-<p>Publishing checks every exam in this batch for clashes first — it will refuse to publish (and show you the clashes) if any student ends up with two exams at once.</p>
+<div class="card" style="text-align: left; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="margin-top: 0; font-size: 1.15rem;">Upload Exams CSV</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Expected CSV Columns: <code>Course Code</code>, <code>Date (YYYY-MM-DD)</code>, <code>Time (HH:MM)</code>, <code>Duration (minutes)</code>.
+    </p>
+    <form method="post" action="{% url 'timetable_upload_csv' timetable.id %}" enctype="multipart/form-data" style="margin: 0;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 260px;">
+                {{ upload_form.as_p }}
+            </div>
+            <div>
+                <button type="submit" class="btn btn-secondary">Upload Batch CSV</button>
+            </div>
+        </div>
+    </form>
+</div>
 {% endif %}
 
-<p><a href="{% url 'timetable_list' %}">Back to Timetables</a></p>
+<div class="page-header" style="margin-top: 1.5rem;">
+    <h3>Exams in this Timetable ({{ exams|length }})</h3>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Exam Date</th>
+                <th>Exam Time</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exam in exams %}
+            <tr>
+                <td><strong>{{ exam.course.course_code }}</strong></td>
+                <td>{{ exam.course.course_title }}</td>
+                <td>{{ exam.exam_date }}</td>
+                <td>{{ exam.exam_time }}</td>
+                <td>{{ exam.duration }} mins</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-table-cell">No exams uploaded into this batch yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if timetable.status == "DRAFT" %}
+<div class="notice-section" style="margin-top: 1.5rem;">
+    <h3 class="notice-title">Automated Clash Detection Guard</h3>
+    <p class="notice-text">
+        Publishing validates student course enrollments against this timetable. If any student has two conflicting exams scheduled at the same date and time, the system will block publication and report all detected conflicts for resolution.
+    </p>
+</div>
+{% endif %}
 {% endblock %}

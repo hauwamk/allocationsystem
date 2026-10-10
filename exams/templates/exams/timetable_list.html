@@ -1,29 +1,57 @@
 {% extends "base.html" %}
 
-{% block title %}Timetables{% endblock %}
+{% block title %}Examination Timetables | Exam System{% endblock %}
 
 {% block content %}
-<h2>Exam Timetables</h2>
-<a href="{% url 'timetable_create' %}" class="btn">+ New Timetable</a>
+<div class="page-header">
+    <div>
+        <h2>Examination Timetables</h2>
+        <p>Draft, publish, and audit semester exam batches with automated clash detection.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'timetable_create' %}" class="btn btn-primary">+ New Timetable Batch</a>
+        <a href="{% url 'exam_list' %}" class="btn btn-secondary">All Exams</a>
+    </div>
+</div>
 
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Exams</th>
-        <th>Created</th>
-        <th>Action</th>
-    </tr>
-    {% for timetable in timetables %}
-    <tr>
-        <td>{{ timetable.name }}</td>
-        <td>{{ timetable.get_status_display }}</td>
-        <td>{{ timetable.exams.count }}</td>
-        <td>{{ timetable.created_at|date:"d M Y" }}</td>
-        <td><a href="{% url 'timetable_detail' timetable.id %}">Open</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No timetables yet.</td></tr>
-    {% endfor %}
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Timetable Name</th>
+                <th>Status</th>
+                <th>Exams Included</th>
+                <th>Created Date</th>
+                <th style="text-align: right;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for timetable in timetables %}
+            <tr>
+                <td><strong>{{ timetable.name }}</strong></td>
+                <td>
+                    {% if timetable.status == "PUBLISHED" %}
+                        <span class="badge badge-completed">Published</span>
+                    {% elif timetable.status == "DRAFT" %}
+                        <span class="badge badge-draft">Draft</span>
+                    {% else %}
+                        <span class="badge" style="background: var(--surface-subtle); color: var(--text-muted);">{{ timetable.get_status_display }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ timetable.exams.count }} exam{{ timetable.exams.count|pluralize }}</td>
+                <td>{{ timetable.created_at|date:"d M Y" }}</td>
+                <td style="text-align: right;">
+                    <a href="{% url 'timetable_detail' timetable.id %}" class="btn btn-sm btn-outline">Open Batch &rarr;</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-table-cell">
+                    No timetables created yet. Click <strong>+ New Timetable Batch</strong> to set up a semester schedule.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

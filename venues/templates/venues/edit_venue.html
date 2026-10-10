@@ -1,19 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}
-Edit Venue
-{% endblock %}
+{% block title %}Edit Venue | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Edit Venue Details</h2>
+        <p>Update venue hall name or maximum student seating capacity.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'venue_list' %}" class="btn btn-secondary">&larr; Back to Venues</a>
+    </div>
+</div>
 
-<h2>Edit Venue</h2>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit">Save Changes</button>
-    <a href="{% url 'venue_list' %}">Cancel</a>
-</form>
-
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'venue_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

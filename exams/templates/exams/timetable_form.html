@@ -1,14 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}New Timetable{% endblock %}
+{% block title %}Create Timetable Batch | Exam System{% endblock %}
 
 {% block content %}
-<h2>New Timetable</h2>
-<p>Give this batch a name (e.g. "2026 First Semester"). It starts as a Draft — you'll upload its exams next, then publish it once it's clash-free.</p>
+<div class="page-header">
+    <div>
+        <h2>Create Timetable Batch</h2>
+        <p>Define a named examination period (e.g., "2026 First Semester Examination").</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'timetable_list' %}" class="btn btn-secondary">&larr; Back to Timetables</a>
+    </div>
+</div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Create Draft</button>
-</form>
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Draft Batch</button>
+            <a href="{% url 'timetable_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

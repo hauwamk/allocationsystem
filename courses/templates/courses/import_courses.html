@@ -1,19 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}
-Import Courses
-{% endblock %}
+{% block title %}Import Courses | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Import Courses Catalog</h2>
+        <p>Upload a CSV file containing academic course curriculum data.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
+    </div>
+</div>
 
-<h2>Import Courses</h2>
-<p>CSV columns: Course Code, Course Title, Department (CS/SE/IT/CY), Level (100/200/300/400), Semester (First/Second).</p>
+<div class="form-card">
+    <div class="notice-section" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV Format</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+            Headers: <code>Course Code</code>, <code>Course Title</code>, <code>Department (COM/SWE/IFT/CBS or CS/SE/IT/CY)</code>, <code>Level (100/200/300/400)</code>, <code>Semester (First/Second)</code>.
+        </p>
+    </div>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Import</button>
-</form>
-<p><a href="{% url 'import_hub' %}">Back to Import data</a></p>
-
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Start Courses Import</button>
+            <a href="{% url 'import_hub' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

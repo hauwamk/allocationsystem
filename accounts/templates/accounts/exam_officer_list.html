@@ -1,20 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Exam Officers{% endblock %}
+{% block title %}Exam Officers | Superadmin Console{% endblock %}
 
 {% block content %}
-<h2>Exam Officer Accounts</h2>
-<a href="{% url 'create_exam_officer' %}" class="btn">+ New Exam Officer</a>
+<div class="page-header">
+    <div>
+        <h2>Exam Officer Accounts</h2>
+        <p>Designated administrative officers who possess operational access to examination timetables.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'create_exam_officer' %}" class="btn btn-primary">+ Create New Exam Officer</a>
+    </div>
+</div>
 
-<table border="1">
-    <tr><th>Username</th><th>Active</th></tr>
-    {% for officer in officers %}
-    <tr>
-        <td>{{ officer.username }}</td>
-        <td>{{ officer.is_active|yesno:"Yes,No" }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="2">No exam officers created yet.</td></tr>
-    {% endfor %}
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Officer Username</th>
+                <th>Account Status</th>
+                <th>Role Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for officer in officers %}
+            <tr>
+                <td><strong>{{ officer.username }}</strong></td>
+                <td>
+                    {% if officer.is_active %}
+                        <span class="badge badge-completed">Active</span>
+                    {% else %}
+                        <span class="badge badge-draft">Disabled</span>
+                    {% endif %}
+                </td>
+                <td>Exam Officer (Staff)</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-table-cell">No exam officer accounts registered yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

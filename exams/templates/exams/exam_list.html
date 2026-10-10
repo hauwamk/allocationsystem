@@ -1,38 +1,64 @@
 {% extends "base.html" %}
 
-{% block title %}
-Exams
-{% endblock %}
+{% block title %}Examinations Schedule | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Examinations Schedule</h2>
+        <p>Active examinations, schedule slots, and individual seat allocation actions.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'add_exam' %}" class="btn btn-primary">+ Add Exam</a>
+        <a href="{% url 'allocate_all_exams' %}" class="btn btn-secondary">Allocate All Exams</a>
+        <a href="{% url 'timetable_list' %}" class="btn btn-secondary">Timetables</a>
+    </div>
+</div>
 
-<h2>Exam Schedule</h2>
-<a href="{% url 'add_exam' %}" class="btn btn-primary mb-3">+ Add Exam</a>
-<a href="{% url 'allocate_all_exams' %}" class="btn btn-secondary mb-3">Allocate All Exams</a>
-
-<table border="1">
-    <tr>
-        <th>Course</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Duration</th>
-        <th>Action</th>
-    </tr>
-
-    {% for exam in exams %}
-    <tr>
-        <td>{{ exam.course.course_code }}</td>
-        <td>{{ exam.exam_date }}</td>
-        <td>{{ exam.exam_time }}</td>
-        <td>{{ exam.duration }} mins</td>
-        <td>
-            <a href="{% url 'edit_exam' exam.id %}">Edit</a> |
-            <a href="{% url 'delete_exam' exam.id %}">Delete</a> |
-            <a href="{% url 'allocate_exam' exam.id %}">Allocate</a>
-        </td>
-    </tr>
-    {% endfor %}
-
-</table>
-
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Exam Date</th>
+                <th>Start Time</th>
+                <th>Duration</th>
+                <th>Timetable Batch</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exam in exams %}
+            <tr>
+                <td><strong>{{ exam.course.course_code }}</strong></td>
+                <td>{{ exam.course.course_title }}</td>
+                <td>{{ exam.exam_date }}</td>
+                <td>{{ exam.exam_time }}</td>
+                <td>{{ exam.duration }} mins</td>
+                <td>
+                    {% if exam.timetable %}
+                        <span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ exam.timetable.name }}</span>
+                    {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Standalone</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: right;">
+                    <div class="actions-cell" style="justify-content: flex-end;">
+                        <a href="{% url 'allocate_exam' exam.id %}" class="btn btn-sm btn-primary">Allocate</a>
+                        <a href="{% url 'edit_exam' exam.id %}" class="btn btn-sm btn-outline">Edit</a>
+                        <a href="{% url 'delete_exam' exam.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="empty-table-cell">
+                    No scheduled exams yet. Click <strong>+ Add Exam</strong> or create a new Timetable batch.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -51,6 +51,8 @@ def student_dashboard(request):
             if timezone.is_aware(now):
                 exam_datetime = timezone.make_aware(exam_datetime)
 
+            duration_mins = getattr(exam, "duration", 0) or 0
+            is_completed = now >= (exam_datetime + timedelta(minutes=duration_mins))
             reveal_time = exam_datetime - timedelta(hours=VENUE_REVEAL_HOURS_BEFORE_EXAM)
             can_view_venue = allocation is not None and now >= reveal_time
 
@@ -58,10 +60,24 @@ def student_dashboard(request):
                 "exam": exam,
                 "allocation": allocation,
                 "can_view_venue": can_view_venue,
+                "is_completed": is_completed,
             })
     exam_rows.sort(key=lambda r: r["exam"].exam_date)
 
-    return render(request, "accounts/dashboard.html", {"student": student, "exam_rows": exam_rows})
+    total_courses = len(registered_courses)
+    completed_count = sum(1 for r in exam_rows if r["is_completed"])
+    remaining_count = len(exam_rows) - completed_count
+    seat_allocation_available = any(r["can_view_venue"] for r in exam_rows)
+
+    context = {
+        "student": student,
+        "exam_rows": exam_rows,
+        "total_courses": total_courses,
+        "completed_count": completed_count,
+        "remaining_count": remaining_count,
+        "seat_allocation_available": seat_allocation_available,
+    }
+    return render(request, "accounts/dashboard.html", context)
 
 
 class InvigilatorLoginView(auth_views.LoginView):
@@ -81,10 +97,35 @@ def invigilator_dashboard(request):
         "exam__course", "venue"
     ).order_by("exam__exam_date")
 
+    now = timezone.now()
+    session_rows = []
+    for session in sessions:
+        exam = session.exam
+        exam_dt = datetime.combine(exam.exam_date, exam.exam_time)
+        if timezone.is_aware(now):
+            exam_dt = timezone.make_aware(exam_dt)
+        duration_mins = getattr(exam, "duration", 0) or 0
+        is_completed = now >= (exam_dt + timedelta(minutes=duration_mins))
+        session_rows.append({
+            "session": session,
+            "is_completed": is_completed,
+        })
+
+    total_sessions = len(session_rows)
+    completed_count = sum(1 for r in session_rows if r["is_completed"])
+    remaining_count = total_sessions - completed_count
+
+    context = {
+        "invigilator": invigilator,
+        "session_rows": session_rows,
+        "total_sessions": total_sessions,
+        "completed_count": completed_count,
+        "remaining_count": remaining_count,
+    }
     return render(
         request,
         "accounts/invigilator_dashboard.html",
-        {"invigilator": invigilator, "sessions": sessions},
+        context,
     )
 
 

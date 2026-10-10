@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home | Examination Venue & Seat Allocation System{% endblock %}
 
 {% block content %}
 <div class="hero-section">
@@ -9,26 +9,46 @@
             <h1 class="hero-title">Examination Venue & Seat Allocation System</h1>
             <p class="hero-subtitle">Faculty of Computing, Bayero University Kano</p>
             <p class="hero-description">
-                This system manages examination scheduling, venue and invigilator
-                allocation, and student seating for the Faculty of Computing. It
-                replaces the manual process of assigning venues and seats with an
-                automated, auditable workflow for exam officers, invigilators, and
-                students.
+                A streamlined, automated examination management platform designed for fair invigilator load distribution, optimized venue capacity utilization, conflict-free scheduling, and secure student seat allocation.
             </p>
         </div>
     </div>
 </div>
 
-<div class="notice-section">
-    <div class="notice-container">
-        <div class="notice-content">
-            <h3 class="notice-title">Logging In</h3>
-            <p class="notice-text">
-                Students, invigilators, and exam officers each have a dedicated
-                login. Use the appropriate link in the navigation menu above to
-                access your account.
-            </p>
+<h3 style="margin-bottom: 1rem;">Access Portals</h3>
+<div class="dashboard-cards" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Student Portal</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Personal Examination Desk</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Access your scheduled exams, registered courses, and seat numbers released prior to commencement.</p>
         </div>
+        <a href="{% url 'student_login' %}" class="btn btn-primary" style="width: 100%;">Student Login &rarr;</a>
     </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Invigilator Portal</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Staff Duty Schedule</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Review assigned supervision sessions, examine venue timings, and track invigilation duties.</p>
+        </div>
+        <a href="{% url 'invigilator_login' %}" class="btn btn-secondary" style="width: 100%;">Invigilator Login &rarr;</a>
+    </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Administration</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Exam Officer Console</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Manage timetables, detect scheduling clashes, execute bulk seat allocations, and generate attendance rosters.</p>
+        </div>
+        <a href="{% url 'exam_officer_login' %}" class="btn btn-secondary" style="width: 100%;">Exam Officer Login &rarr;</a>
+    </div>
+</div>
+
+<div class="notice-section">
+    <h3 class="notice-title">Important Examination Security Notice</h3>
+    <p class="notice-text">
+        In accordance with Faculty guidelines, specific venue halls and individual seat allocation numbers are released to student dashboards exactly <strong>1 hour</strong> prior to the official exam start time.
+    </p>
 </div>
 {% endblock %}

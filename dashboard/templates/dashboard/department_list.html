@@ -1,20 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Departments{% endblock %}
+{% block title %}Departments Overview | Exam System{% endblock %}
 
 {% block content %}
-<h2>Departments</h2>
+<div class="page-header">
+    <div>
+        <h2>Academic Departments</h2>
+        <p>Faculty of Computing departments, registered student cohorts, and course offerings.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+    </div>
+</div>
 
-<table border="1">
-    <tr><th>Code</th><th>Name</th><th>Students</th><th>Courses</th><th>Action</th></tr>
-    {% for dept in departments %}
-    <tr>
-        <td>{{ dept.code }}</td>
-        <td>{{ dept.name }}</td>
-        <td>{{ dept.student_count }}</td>
-        <td>{{ dept.course_count }}</td>
-        <td><a href="{% url 'department_detail' dept.code %}">View</a></td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Department Code</th>
+                <th>Department Full Name</th>
+                <th>Total Students</th>
+                <th>Total Courses</th>
+                <th style="text-align: right;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in departments %}
+            <tr>
+                <td><strong>{{ dept.code }}</strong></td>
+                <td>{{ dept.name }}</td>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ dept.student_count }} student{{ dept.student_count|pluralize }}</span></td>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ dept.course_count }} course{{ dept.course_count|pluralize }}</span></td>
+                <td style="text-align: right;">
+                    <a href="{% url 'department_detail' dept.code %}" class="btn btn-sm btn-outline">View Department &rarr;</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-table-cell">No department records available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

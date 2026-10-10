@@ -1,19 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}
-Import Invigilators
-{% endblock %}
+{% block title %}Import Invigilators | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Import Invigilators Roster</h2>
+        <p>Upload a CSV file of invigilator staff records.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
+    </div>
+</div>
 
-<h2>Import Invigilators</h2>
-<p>CSV columns: Staff ID, Full Name, Phone Number. Each new invigilator gets a login automatically (username and starting password = staff ID).</p>
+<div class="form-card">
+    <div class="notice-section" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV Format</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+            Headers: <code>Staff ID</code>, <code>Full Name</code>, <code>Phone Number</code>.
+            Each new invigilator account is provisioned automatically with their Staff ID.
+        </p>
+    </div>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Import</button>
-</form>
-<p><a href="{% url 'import_hub' %}">Back to Import data</a></p>
-
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Start Invigilators Import</button>
+            <a href="{% url 'import_hub' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

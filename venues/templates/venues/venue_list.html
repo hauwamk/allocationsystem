@@ -1,32 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}
-Venues
-{% endblock %}
+{% block title %}Examination Venues | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Examination Venues</h2>
+        <p>Configured exam halls, classrooms, and seat capacity limits.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'add_venue' %}" class="btn btn-primary">+ Add Venue</a>
+    </div>
+</div>
 
-<h2>Venue List</h2>
-<a href="{% url 'add_venue' %}" class="btn btn-primary mb-3">+ Add Venue</a>
-
-<table border="1">
-    <tr>
-        <th>Venue Name</th>
-        <th>Capacity</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for venue in venues %}
-    <tr>
-        <td>{{ venue.venue_name }}</td>
-        <td>{{ venue.capacity }}</td>
-        <td>
-            <a href="{% url 'edit_venue' id=venue.id %}">Edit</a> |
-            <a href="{% url 'delete_venue' id=venue.id %}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-
-</table>
-
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Venue Name</th>
+                <th>Seat Capacity</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venue in venues %}
+            <tr>
+                <td><strong>{{ venue.venue_name }}</strong></td>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--text-main); font-size: 0.85rem;">{{ venue.capacity }} seats</span></td>
+                <td style="text-align: right;">
+                    <div class="actions-cell" style="justify-content: flex-end;">
+                        <a href="{% url 'edit_venue' id=venue.id %}" class="btn btn-sm btn-outline">Edit</a>
+                        <a href="{% url 'delete_venue' id=venue.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-table-cell">
+                    No venues recorded yet. Click <strong>+ Add Venue</strong> to add examination halls.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

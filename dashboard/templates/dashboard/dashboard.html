@@ -2,400 +2,66 @@
 
 {% block title %}Dashboard | Exam Allocation System{% endblock %}
 
-{% block global_nav %}{% endblock %}
-
 {% block content %}
-
-<style>
-/* =========================================
-   OFFICER DASHBOARD
-   ========================================= */
-
-.officer-dashboard {
-    display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 30px;
-    align-items: start;
-    width: 100%;
-}
-
-
-/* =========================================
-   SIDEBAR
-   ========================================= */
-
-.dashboard-sidebar {
-    background: #0f172a;
-    color: white;
-    border-radius: 12px;
-    padding: 24px 14px;
-    min-height: 600px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.sidebar-title {
-    padding: 0 12px 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.sidebar-title h3 {
-    margin: 0;
-    color: white;
-    font-size: 18px;
-}
-
-.sidebar-title p {
-    margin: 6px 0 0;
-    color: #cbd5e1;
-    font-size: 13px;
-}
-
-
-/* =========================================
-   SIDEBAR LINKS
-   ========================================= */
-
-.dashboard-sidebar .sidebar-nav {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px;
-    background: transparent !important;
-    border: none !important;
-}
-
-.dashboard-sidebar .sidebar-nav a {
-    display: block !important;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px;
-    color: #cbd5e1 !important;
-    background: transparent !important;
-    text-decoration: none;
-    border-radius: 7px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.2s ease;
-}
-
-.dashboard-sidebar .sidebar-nav a:hover {
-    background: #1e293b !important;
-    color: white !important;
-}
-
-.dashboard-sidebar .sidebar-nav a.active {
-    background: #4f46e5 !important;
-    color: white !important;
-}
-
-
-/* =========================================
-   DASHBOARD MAIN CONTENT
-   ========================================= */
-
-.dashboard-main {
-    min-width: 0;
-}
-
-.dashboard-header {
-    margin-bottom: 30px;
-}
-
-.dashboard-header h2 {
-    margin: 0 0 8px;
-}
-
-.dashboard-header p {
-    margin: 0;
-    color: #64748b;
-}
-
-
-/* =========================================
-   KEY METRICS
-   ========================================= */
-
-.dashboard-main > h3 {
-    margin-bottom: 15px;
-}
-
-.dashboard-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 35px;
-}
-
-.dashboard-cards .card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 22px;
-    margin: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.dashboard-cards .card h4 {
-    margin: 0 0 10px;
-    color: #64748b;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.dashboard-cards .card p {
-    margin: 0;
-    color: #0f172a;
-    font-size: 32px;
-    font-weight: 700;
-}
-
-
-/* =========================================
-   DEPARTMENTAL BREAKDOWN
-   ========================================= */
-
-.department-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-}
-
-.department-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.department-card h4 {
-    margin: 0 0 8px;
-    color: #0f172a;
-}
-
-.department-card p {
-    margin: 0;
-    color: #64748b;
-}
-
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
-
-@media (max-width: 1000px) {
-
-    .officer-dashboard {
-        grid-template-columns: 210px minmax(0, 1fr);
-        gap: 20px;
-    }
-
-    .dashboard-cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-
-@media (max-width: 750px) {
-
-    .officer-dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .dashboard-sidebar {
-        min-height: auto;
-    }
-
-    .dashboard-sidebar .sidebar-nav {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dashboard-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .department-cards {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-@media (max-width: 450px) {
-
-    .dashboard-sidebar .sidebar-nav {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-
-
-<div class="officer-dashboard">
-
-    <!-- =====================================
-         VERTICAL SIDEBAR
-         ===================================== -->
-
-    <aside class="dashboard-sidebar">
-
-        <div class="sidebar-title">
-            <h3>Exam Officer</h3>
-            <p>{{ user.username }}</p>
-        </div>
-
-        <nav class="sidebar-nav">
-
-            <a href="/dashboard/" class="active">
-                Dashboard
-            </a>
-
-            <a href="/students/">
-                Students
-            </a>
-
-            <a href="/courses/">
-                Courses
-            </a>
-
-            <a href="/venues/">
-                Venues
-            </a>
-
-            <a href="/invigilators/">
-                Invigilators
-            </a>
-
-            <a href="/exams/">
-                Exams
-            </a>
-
-            <a href="/exams/timetables/">
-                Timetable
-            </a>
-
-            <a href="/allocations/">
-                Allocations
-            </a>
-
-            <a href="{% url 'import_hub' %}">
-                Import Hub
-            </a>
-
-        </nav>
-
-        <!-- Logout -->
-        <form method="post"
-              action="{% url 'exam_officer_logout' %}"
-              style="margin-top: 25px; padding: 0 6px;">
-
-            {% csrf_token %}
-
-            <button type="submit"
-                    style="
-                    width: 100%;
-                    padding: 11px;
-                    border: 1px solid #475569;
-                    border-radius: 7px;
-                    background: transparent;
-                    color: #cbd5e1;
-                    cursor: pointer;
-                    font-size: 14px;
-                    ">
-
-                Logout
-
-            </button>
-
-        </form>
-
-    </aside>
-
-
-    <!-- =====================================
-         MAIN DASHBOARD
-         ===================================== -->
-
-    <section class="dashboard-main">
-
-        <div class="dashboard-header">
-
-            <h2>System Overview</h2>
-
-            <p>
-                Welcome to the Exam Allocation System.
-                Monitor key statistics and departmental distribution below.
-            </p>
-
-        </div>
-
-
-        <h3>Key Metrics</h3>
-
-        <div class="dashboard-cards">
-
-            <div class="card">
-                <h4>Students</h4>
-                <p>{{ total_students }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Courses</h4>
-                <p>{{ total_courses }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Venues</h4>
-                <p>{{ total_venues }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Exams</h4>
-                <p>{{ total_exams }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Invigilators</h4>
-                <p>{{ total_invigilators }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Allocations</h4>
-                <p>{{ total_allocations }}</p>
-            </div>
-
-        </div>
-
-
-        <h3>Departmental Breakdown</h3>
-
-        <div class="department-cards">
-
-            {% for dept in department_counts %}
-
-            <div class="department-card">
-
-                <h4>
-                    Department: {{ dept.department }}
-                </h4>
-
-                <p>
-                    {{ dept.count }}
-                    Student{{ dept.count|pluralize }}
-                </p>
-
-            </div>
-
-            {% empty %}
-
-            <p>No student data available yet.</p>
-
-            {% endfor %}
-
-        </div>
-
-    </section>
-
+<div class="page-header">
+    <div>
+        <h2>System Overview</h2>
+        <p>Monitor key academic metrics, examination schedules, and student seat allocations.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'import_hub' %}" class="btn btn-secondary">Data Import Hub</a>
+        <a href="{% url 'allocate_all_exams' %}" class="btn btn-primary">Allocate All Exams</a>
+    </div>
 </div>
 
+<h3>Key Metrics</h3>
+<div class="dashboard-cards">
+    <div class="card">
+        <h4>Total Students</h4>
+        <p>{{ total_students }}</p>
+    </div>
+    <div class="card">
+        <h4>Active Courses</h4>
+        <p>{{ total_courses }}</p>
+    </div>
+    <div class="card">
+        <h4>Available Venues</h4>
+        <p>{{ total_venues }}</p>
+    </div>
+    <div class="card">
+        <h4>Scheduled Exams</h4>
+        <p>{{ total_exams }}</p>
+    </div>
+    <div class="card">
+        <h4>Invigilators</h4>
+        <p>{{ total_invigilators }}</p>
+    </div>
+    <div class="card">
+        <h4>Total Seated</h4>
+        <p>{{ total_allocations }}</p>
+    </div>
+</div>
+
+<div class="page-header" style="margin-top: 2rem;">
+    <div>
+        <h3>Departmental Distribution</h3>
+        <p>Student enrolment numbers grouped by department.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'department_list' %}" class="btn btn-sm btn-secondary">View Department Details</a>
+    </div>
+</div>
+
+<div class="department-cards">
+    {% for dept in department_counts %}
+    <div class="department-card">
+        <h4>Department {{ dept.department }}</h4>
+        <p>{{ dept.count }} Student{{ dept.count|pluralize }}</p>
+    </div>
+    {% empty %}
+    <div class="card" style="grid-column: 1 / -1; text-align: center;">
+        <p style="font-size: 1rem; font-weight: normal; color: var(--text-muted);">No student data available yet. Import students or register new records to see distributions.</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -1,39 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Bulk Register{% endblock %}
+{% block title %}Bulk Course Registration | Exam System{% endblock %}
 
 {% block content %}
-<h2>Bulk Register Students for Courses</h2>
-<p>Pick a department, level, and semester. You'll get a list of matching students and matching core courses to review before registering everyone at once.</p>
+<div class="page-header">
+    <div>
+        <h2>Bulk Course Registration</h2>
+        <p>Batch enroll an entire cohort of students into their semester curriculum offerings at once.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'students_list' %}" class="btn btn-secondary">&larr; Back to Students</a>
+    </div>
+</div>
 
-<form method="get">
-    <p>
-        <label>Department</label><br>
-        <select name="department" required>
-            <option value="">-- Select --</option>
-            {% for value, label in departments %}
-                <option value="{{ value }}">{{ label }}</option>
-            {% endfor %}
-        </select>
+<div class="form-card">
+    <h3 style="margin-top: 0; font-size: 1.15rem; margin-bottom: 0.5rem;">Step 1: Select Cohort Parameters</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Choose the department, level, and semester to automatically find all eligible students and active courses.
     </p>
-    <p>
-        <label>Level</label><br>
-        <select name="level" required>
-            <option value="">-- Select --</option>
-            {% for value, label in levels %}
-                <option value="{{ value }}">{{ label }}</option>
-            {% endfor %}
-        </select>
-    </p>
-    <p>
-        <label>Semester</label><br>
-        <select name="semester" required>
-            <option value="">-- Select --</option>
-            {% for value, label in semesters %}
-                <option value="{{ value }}">{{ label }}</option>
-            {% endfor %}
-        </select>
-    </p>
-    <button type="submit" class="btn">Next: Review Matches</button>
-</form>
+
+    <form method="get">
+        <p>
+            <label for="id_department">Department</label>
+            <select id="id_department" name="department" required>
+                <option value="">-- Select Department --</option>
+                {% for value, label in departments %}
+                    <option value="{{ value }}">{{ label }} ({{ value }})</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label for="id_level">Academic Level</label>
+            <select id="id_level" name="level" required>
+                <option value="">-- Select Level --</option>
+                {% for value, label in levels %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label for="id_semester">Semester</label>
+            <select id="id_semester" name="semester" required>
+                <option value="">-- Select Semester --</option>
+                {% for value, label in semesters %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Next: Review Cohort & Courses &rarr;</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

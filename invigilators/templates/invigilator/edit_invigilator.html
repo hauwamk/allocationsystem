@@ -1,19 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}
-Edit Invigilator
-{% endblock %}
+{% block title %}Edit Invigilator | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Edit Invigilator Details</h2>
+        <p>Update full name or contact phone number for this invigilator.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'invigilators_list' %}" class="btn btn-secondary">&larr; Back to Invigilators</a>
+    </div>
+</div>
 
-<h2>Edit Invigilator</h2>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit">Save Changes</button>
-    <a href="{% url 'invigilators_list' %}">Cancel</a>
-</form>
-
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'invigilators_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
