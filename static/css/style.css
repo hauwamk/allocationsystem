@@ -782,14 +782,57 @@ input::placeholder, select::placeholder {
     margin: 0.15rem 0;
 }
 
-/* Minimalist Clean Hero Section for Public Home */
+/* Minimalist Clean Hero Section for Public Home with BUK Architectural Backdrop */
 .hero-section {
-    background: var(--surface);
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.84) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 3rem 2.5rem;
+    padding: 3.5rem 2.5rem;
     margin-bottom: 2rem;
     box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: radial-gradient(circle at 90% 40%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.75) 100%);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Authentication Container with BUK Architectural Backdrop */
+.auth-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 65vh;
+    padding: 2.5rem 1rem;
+    position: relative;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.85) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.auth-page-container .form-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(226, 232, 240, 0.85);
 }
 
 .hero-title {
