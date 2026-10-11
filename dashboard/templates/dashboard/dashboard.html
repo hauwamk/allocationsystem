@@ -7,187 +7,435 @@
 {% block content %}
 
 <style>
-/* =========================================
-   OFFICER DASHBOARD
-   ========================================= */
+/* =========================================================
+   EXAM OFFICER DASHBOARD — PROFESSIONAL UI
+   ========================================================= */
 
 .officer-dashboard {
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 30px;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 28px;
     align-items: start;
     width: 100%;
 }
 
 
-/* =========================================
+/* =========================================================
    SIDEBAR
-   ========================================= */
+   ========================================================= */
 
 .dashboard-sidebar {
-    background: #0f172a;
-    color: white;
-    border-radius: 12px;
-    padding: 24px 14px;
-    min-height: 600px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    background: var(--primary);
+    color: var(--text-light);
+    border-radius: 18px;
+    padding: 22px 14px;
+    min-height: 0;
+    box-shadow: var(--shadow-lg);
+
+    position: sticky;
+    top: 20px;
 }
 
 .sidebar-title {
-    padding: 0 12px 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 6px 12px 22px;
+    margin-bottom: 16px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .sidebar-title h3 {
     margin: 0;
-    color: white;
-    font-size: 18px;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
 }
 
 .sidebar-title p {
     margin: 6px 0 0;
-    color: #cbd5e1;
-    font-size: 13px;
+    color: #9fb8b4;
+    font-size: 12px;
 }
 
 
-/* =========================================
-   SIDEBAR LINKS
-   ========================================= */
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
 
 .dashboard-sidebar .sidebar-nav {
     display: flex !important;
     flex-direction: column !important;
-    gap: 6px;
+    gap: 5px;
+
     background: transparent !important;
     border: none !important;
 }
 
 .dashboard-sidebar .sidebar-nav a {
-    display: block !important;
+    display: flex !important;
+    align-items: center;
+
     width: 100%;
     box-sizing: border-box;
-    padding: 12px;
-    color: #cbd5e1 !important;
+
+    padding: 12px 13px;
+
+    color: #b9cfcb !important;
     background: transparent !important;
+
     text-decoration: none;
-    border-radius: 7px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.2s ease;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
 }
 
 .dashboard-sidebar .sidebar-nav a:hover {
-    background: #1e293b !important;
-    color: white !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    transform: translateX(2px);
 }
 
 .dashboard-sidebar .sidebar-nav a.active {
-    background: #4f46e5 !important;
-    color: white !important;
+    background: var(--accent) !important;
+    color: #ffffff !important;
+    box-shadow: 0 5px 12px rgba(15, 118, 110, 0.25);
+}
+/* =========================================================
+   SIDEBAR ICONS & SECTIONS
+   ========================================================= */
+
+.sidebar-section-label {
+    padding: 16px 13px 7px;
+    color: #6f918b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.sidebar-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 11px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.sidebar-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+.dashboard-sidebar .sidebar-nav a.active .sidebar-icon {
+    opacity: 1;
 }
 
 
-/* =========================================
-   DASHBOARD MAIN CONTENT
-   ========================================= */
+/* =========================================================
+   SIDEBAR LOGOUT
+   ========================================================= */
+
+.dashboard-sidebar form {
+    margin-top: 30px !important;
+    padding: 16px 6px 0 !important;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.dashboard-sidebar form button {
+    width: 100% !important;
+
+    padding: 11px 14px !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 9px !important;
+
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #b9cfcb !important;
+
+    cursor: pointer;
+
+    font-size: 13px !important;
+    font-weight: 600;
+
+    transition: 180ms ease;
+}
+
+.dashboard-sidebar form button:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
 
 .dashboard-main {
     min-width: 0;
 }
 
-.dashboard-header {
-    margin-bottom: 30px;
+
+/* =========================================================
+   DASHBOARD HEADER
+   ========================================================= */
+
+  .dashboard-header {
+    margin-bottom: 32px;
+    padding: 4px 0 22px;
+    border-bottom: 1px solid var(--border);
 }
 
 .dashboard-header h2 {
-    margin: 0 0 8px;
+    margin: 0 0 7px;
+    color: var(--text-main);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
 }
 
 .dashboard-header p {
+    max-width: 720px;
     margin: 0;
-    color: #64748b;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
 }
-
-
-/* =========================================
-   KEY METRICS
-   ========================================= */
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
 
 .dashboard-main > h3 {
-    margin-bottom: 15px;
+    margin: 0 0 15px;
+
+    color: var(--text-main);
+
+    font-size: 16px;
+    font-weight: 800;
 }
+
+
+/* =========================================================
+   KEY METRIC CARDS
+   ========================================================= */
+
+ /* =========================================================
+   KEY METRIC CARDS
+   ========================================================= */
 
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 35px;
+    gap: 16px;
+    margin-bottom: 38px;
 }
 
-.dashboard-cards .card {
-    background: white;
-    border: 1px solid #e2e8f0;
+.dashboard-cards .metric-card {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    padding: 20px;
+
+    margin: 0;
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
+}
+
+.dashboard-cards .metric-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 4px;
+
+    background: var(--accent);
+}
+
+.dashboard-cards .metric-card:hover {
+    transform: translateY(-3px);
+    border-color: #bfd4d0;
+    box-shadow: var(--shadow-md);
+}
+
+
+/* Icon */
+
+.metric-icon {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     border-radius: 12px;
-    padding: 22px;
-    margin: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    background: var(--accent-light);
+
+    font-size: 21px;
 }
 
-.dashboard-cards .card h4 {
-    margin: 0 0 10px;
-    color: #64748b;
-    font-size: 13px;
+
+/* Text */
+
+.metric-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.metric-label {
+    color: var(--text-muted);
+
+    font-size: 11px;
+    font-weight: 800;
+
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.7px;
 }
 
-.dashboard-cards .card p {
-    margin: 0;
-    color: #0f172a;
-    font-size: 32px;
-    font-weight: 700;
+.metric-content strong {
+    color: var(--text-main);
+
+    font-size: 29px;
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
 }
-
-
-/* =========================================
+/* =========================================================
    DEPARTMENTAL BREAKDOWN
-   ========================================= */
+   ========================================================= */
 
 .department-cards {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 30px;
 }
 
 .department-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    position: relative;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.department-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.department-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 16px;
+    bottom: 16px;
+
+    width: 3px;
+
+    background: var(--accent);
+
+    border-radius: 0 4px 4px 0;
 }
 
 .department-card h4 {
     margin: 0 0 8px;
-    color: #0f172a;
+    padding-left: 5px;
+
+    color: var(--text-main);
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .department-card p {
     margin: 0;
-    color: #64748b;
+    padding-left: 5px;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
 }
 
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
 
-@media (max-width: 1000px) {
+.department-cards > p {
+    background: var(--surface);
+
+    border: 1px dashed var(--border-dark);
+    border-radius: 12px;
+
+    padding: 25px;
+
+    color: var(--text-muted);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
 
     .officer-dashboard {
-        grid-template-columns: 210px minmax(0, 1fr);
+        grid-template-columns: 220px minmax(0, 1fr);
         gap: 20px;
     }
 
@@ -204,12 +452,14 @@
     }
 
     .dashboard-sidebar {
+        position: static;
         min-height: auto;
     }
 
     .dashboard-sidebar .sidebar-nav {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
     }
 
     .dashboard-cards {
@@ -218,6 +468,10 @@
 
     .department-cards {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard-header h2 {
+        font-size: 24px;
     }
 }
 
@@ -229,8 +483,6 @@
     }
 }
 </style>
-
-
 <div class="officer-dashboard">
 
     <!-- =====================================
@@ -244,46 +496,138 @@
             <p>{{ user.username }}</p>
         </div>
 
-        <nav class="sidebar-nav">
+       <nav class="sidebar-nav">
 
-            <a href="/dashboard/" class="active">
-                Dashboard
-            </a>
+    <div class="sidebar-section-label">
+        MAIN
+    </div>
 
-            <a href="/students/">
-                Students
-            </a>
+    <a href="/dashboard/" class="active">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+            </svg>
+        </span>
+        <span>Dashboard</span>
+    </a>
 
-            <a href="/courses/">
-                Courses
-            </a>
+    <a href="/students/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </span>
+        <span>Students</span>
+    </a>
 
-            <a href="/venues/">
-                Venues
-            </a>
+    <a href="/courses/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+        </span>
+        <span>Courses</span>
+    </a>
 
-            <a href="/invigilators/">
-                Invigilators
-            </a>
 
-            <a href="/exams/">
-                Exams
-            </a>
+    <div class="sidebar-section-label">
+        EXAM MANAGEMENT
+    </div>
 
-            <a href="/exams/timetables/">
-                Timetable
-            </a>
+    <a href="/venues/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18"></path>
+                <path d="M5 21V5l7-3 7 3v16"></path>
+                <path d="M9 9h1"></path>
+                <path d="M14 9h1"></path>
+                <path d="M9 13h1"></path>
+                <path d="M14 13h1"></path>
+                <path d="M10 21v-4h4v4"></path>
+            </svg>
+        </span>
+        <span>Venues</span>
+    </a>
 
-            <a href="/allocations/">
-                Allocations
-            </a>
+    <a href="/invigilators/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M5.5 21a6.5 6.5 0 0 1 13 0"></path>
+            </svg>
+        </span>
+        <span>Invigilators</span>
+    </a>
 
-            <a href="{% url 'import_hub' %}">
-                Import Hub
-            </a>
+    <a href="/exams/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                <path d="M8 7h8"></path>
+                <path d="M8 11h8"></path>
+                <path d="M8 15h5"></path>
+            </svg>
+        </span>
+        <span>Exams</span>
+    </a>
 
-        </nav>
+    <a href="/exams/timetables/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                <path d="M16 2v4"></path>
+                <path d="M8 2v4"></path>
+                <path d="M3 10h18"></path>
+            </svg>
+        </span>
+        <span>Timetable</span>
+    </a>
 
+    <a href="/allocations/">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16v16H4z"></path>
+                <path d="M8 8h8"></path>
+                <path d="M8 12h8"></path>
+                <path d="M8 16h5"></path>
+            </svg>
+        </span>
+        <span>Allocations</span>
+    </a>
+
+
+    <div class="sidebar-section-label">
+        DATA
+    </div>
+
+    <a href="{% url 'import_hub' %}">
+        <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+            </svg>
+        </span>
+        <span>Import Hub</span>
+    </a>
+
+</nav>
         <!-- Logout -->
         <form method="post"
               action="{% url 'exam_officer_logout' %}"
@@ -334,37 +678,66 @@
 
         <div class="dashboard-cards">
 
-            <div class="card">
-                <h4>Students</h4>
-                <p>{{ total_students }}</p>
-            </div>
+    <div class="card metric-card">
+        <div class="metric-icon">👥</div>
 
-            <div class="card">
-                <h4>Courses</h4>
-                <p>{{ total_courses }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Venues</h4>
-                <p>{{ total_venues }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Exams</h4>
-                <p>{{ total_exams }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Invigilators</h4>
-                <p>{{ total_invigilators }}</p>
-            </div>
-
-            <div class="card">
-                <h4>Allocations</h4>
-                <p>{{ total_allocations }}</p>
-            </div>
-
+        <div class="metric-content">
+            <span class="metric-label">Students</span>
+            <strong>{{ total_students }}</strong>
         </div>
+    </div>
+
+
+    <div class="card metric-card">
+        <div class="metric-icon">📚</div>
+
+        <div class="metric-content">
+            <span class="metric-label">Courses</span>
+            <strong>{{ total_courses }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card metric-card">
+        <div class="metric-icon">🏫</div>
+
+        <div class="metric-content">
+            <span class="metric-label">Venues</span>
+            <strong>{{ total_venues }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card metric-card">
+        <div class="metric-icon">📝</div>
+
+        <div class="metric-content">
+            <span class="metric-label">Exams</span>
+            <strong>{{ total_exams }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card metric-card">
+        <div class="metric-icon">👤</div>
+
+        <div class="metric-content">
+            <span class="metric-label">Invigilators</span>
+            <strong>{{ total_invigilators }}</strong>
+        </div>
+    </div>
+
+
+    <div class="card metric-card">
+        <div class="metric-icon">🎟</div>
+
+        <div class="metric-content">
+            <span class="metric-label">Allocations</span>
+            <strong>{{ total_allocations }}</strong>
+        </div>
+    </div>
+
+</div>
 
 
         <h3>Departmental Breakdown</h3>

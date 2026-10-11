@@ -10,61 +10,76 @@
    1. DESIGN SYSTEM TOKENS & VARIABLES
    -------------------------------------------------------------------------- */
 :root {
-    /* Brand & Theme Colors */
-    --primary: #0f172a;            /* Deep Midnight Navy/Slate - Header & Primary Elements */
-    --primary-hover: #1e293b;      /* Dark Slate Hover State */
-    --primary-light: #334155;      /* Subheader & Navigation Secondary Layer */
-    --accent: #4f46e5;             /* Royal Indigo - Primary CTA & Interactive Focus */
-    --accent-hover: #4338ca;       /* Dark Indigo for Hover States */
-    --accent-light: #eef2ff;      /* Light Indigo Tint for Active Badges & Backgrounds */
+    /* =========================================================
+       FCIT EXAMINATION SYSTEM — NEW COLOR SYSTEM
+       Emerald + Deep Charcoal + Warm White
+       ========================================================= */
 
-    /* Surfaces & Layout Backgrounds */
-    --bg-main: #f8fafc;           /* Soft Light Grey-Blue Body Background */
-    --surface: #ffffff;           /* Clean Card & Table Surface Background */
-    --surface-alt: #f1f5f9;       /* Subtle Secondary Background Layer */
+    /* Brand */
+    --primary: #102A2A;
+    --primary-hover: #173B3A;
+    --primary-light: #28504D;
 
-    /* Typography Colors */
-    --text-main: #0f172a;         /* High-contrast Main Body & Heading Text */
-    --text-muted: #64748b;        /* Muted Secondary Text, Labels & Captions */
-    --text-light: #ffffff;        /* Inverted Light Text for Dark Components */
+    /* Main Accent */
+    --accent: #0F766E;
+    --accent-hover: #0D5F59;
+    --accent-light: #E6F4F1;
 
-    /* Borders & Dividers */
-    --border: #e2e8f0;            /* Default Soft Border Color */
-    --border-dark: #cbd5e1;       /* Emphasized Input & Card Border Color */
+    /* Backgrounds & Surfaces */
+    --bg-main: #F7F9F8;
+    --surface: #FFFFFF;
+    --surface-alt: #F0F5F3;
 
-    /* Status Notifications & Badges */
-    --success: #059669;           /* Emerald Green - Success Messages & Positive Counts */
-    --success-bg: #ecfdf5;        /* Light Emerald Background Fill */
-    --success-border: #a7f3d0;    /* Success Border Accent */
-    
-    --warning: #d97706;           /* Amber - Warnings & Alerts */
-    --warning-bg: #fffbeb;        /* Light Amber Background Fill */
-    --warning-border: #fde68a;    /* Warning Border Accent */
+    /* Typography */
+    --text-main: #172121;
+    --text-muted: #647474;
+    --text-light: #FFFFFF;
 
-    --error: #dc2626;             /* Rose Red - Errors & Destructive Actions */
-    --error-bg: #fef2f2;          /* Light Red Background Fill */
-    --error-border: #fecaca;      /* Error Border Accent */
+    /* Borders */
+    --border: #DCE6E4;
+    --border-dark: #C4D3D0;
 
-    --info: #0284c7;              /* Sky Blue - Informational Banners */
-    --info-bg: #f0f9ff;           /* Light Sky Blue Fill */
-    --info-border: #bae6fd;       /* Info Border Accent */
+    /* Success */
+    --success: #16805C;
+    --success-bg: #EAF7F1;
+    --success-border: #A8DEC7;
 
-    /* Elevational Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
-    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    /* Warning */
+    --warning: #B7791F;
+    --warning-bg: #FFF8E7;
+    --warning-border: #F2D58A;
 
-    /* Layout Geometry */
+    /* Error */
+    --error: #C53030;
+    --error-bg: #FFF0F0;
+    --error-border: #F2B8B8;
+
+    /* Information */
+    --info: #277A9F;
+    --info-bg: #EDF7FB;
+    --info-border: #B7DDEB;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(16, 42, 42, 0.05);
+
+    --shadow-md:
+        0 4px 10px rgba(16, 42, 42, 0.07),
+        0 2px 4px rgba(16, 42, 42, 0.04);
+
+    --shadow-lg:
+        0 12px 24px rgba(16, 42, 42, 0.10),
+        0 4px 8px rgba(16, 42, 42, 0.05);
+
+    /* Layout */
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --max-width: 1200px;
 
-    /* Micro-Animations & Transitions */
+    /* Transitions */
     --transition-fast: 150ms ease;
     --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 /* --------------------------------------------------------------------------
    2. GLOBAL RESET & BASE TYPOGRAPHY
    -------------------------------------------------------------------------- */
@@ -1308,3 +1323,233 @@ input::placeholder, select::placeholder {
 
 .badge-upcoming  { background: var(--info-bg);    color: var(--info); }
 .badge-completed { background: var(--success-bg); color: var(--success); }
+
+/* =========================================================
+   PROFESSIONAL HEADER & NAVIGATION
+   ========================================================= */
+
+.app-header {
+    background: var(--primary);
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    color: #6FC7BC;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.brand-name {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.brand-subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    color: #AFC4C1;
+    letter-spacing: 0.2px;
+}
+
+.nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.app-nav {
+    background: rgba(0, 0, 0, 0.12);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nav-inner-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.nav-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 11px;
+
+    color: #D8E5E3;
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    border-radius: var(--radius-sm);
+
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #FFFFFF;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 11px;
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.user-badge.admin {
+    background: rgba(111, 199, 188, 0.15);
+    color: #9DE0D7;
+    border: 1px solid rgba(111, 199, 188, 0.25);
+}
+
+.user-badge.student {
+    background: rgba(111, 199, 188, 0.15);
+    color: #9DE0D7;
+}
+
+.user-badge.invigilator {
+    background: rgba(111, 199, 188, 0.15);
+    color: #9DE0D7;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-form .btn {
+    margin: 0;
+}
+
+.btn-outline-light {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* =========================================================
+   MOBILE HEADER
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .header-container {
+        padding: 15px 18px;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .app-nav {
+        display: none;
+    }
+
+    .app-nav.open {
+        display: block;
+    }
+
+    .nav-inner-container {
+        padding: 12px 18px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-item {
+        width: 100%;
+        padding: 11px 12px;
+    }
+
+    .nav-user {
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        justify-content: space-between;
+    }
+}
+
+
+/* =========================================================
+   LARGE SCREEN IMPROVEMENT
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+    .app-nav {
+        overflow-x: auto;
+    }
+
+    .nav-inner-container {
+        min-width: max-content;
+    }
+}
