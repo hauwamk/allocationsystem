@@ -1,26 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Import Data | Exam Allocation System{% endblock %}
+{% block title %}Data Import Hub | Exam System{% endblock %}
 
 {% block content %}
-<h2>Data Import Hub</h2>
-<p>Upload structured CSV data files to bulk-load students, courses, or invigilators into the system.</p>
+<div class="page-header">
+    <div>
+        <h2>Data Import Hub</h2>
+        <p>Batch upload structured CSV data files to quickly populate university records.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+    </div>
+</div>
 
-<div class="dashboard-cards">
-    <div class="card" style="text-align: left;">
-        <h4>Student Directory</h4>
-        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Bulk register student profiles, levels, and departments.</p>
-        <a href="{% url 'import_students' %}" class="btn btn-primary">Import Students</a>
+<div class="dashboard-cards" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Student Directory</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Student Records CSV</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Batch import student registration numbers, names, departments, levels, and emails.
+            </p>
+        </div>
+        <a href="{% url 'import_students' %}" class="btn btn-primary" style="width: 100%;">Import Students &rarr;</a>
     </div>
-    <div class="card" style="text-align: left;">
-        <h4>Course Catalog</h4>
-        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Upload course codes, titles, departments, and levels.</p>
-        <a href="{% url 'import_courses' %}" class="btn btn-primary">Import Courses</a>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Curriculum Offering</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Course Catalog CSV</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Upload course codes, titles, departments, levels, and semester designations.
+            </p>
+        </div>
+        <a href="{% url 'import_courses' %}" class="btn btn-secondary" style="width: 100%;">Import Courses &rarr;</a>
     </div>
-    <div class="card" style="text-align: left;">
-        <h4>Invigilators Roster</h4>
-        <p style="font-size: 0.95rem; font-weight: normal; margin-bottom: 1.25rem; color: var(--text-muted);">Import supervisor staff accounts and contact phone numbers.</p>
-        <a href="{% url 'import_invigilators' %}" class="btn btn-primary">Import Invigilators</a>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Faculty Staff</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Invigilators Roster CSV</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Import supervisor staff IDs, full names, and contact phone numbers with automatic accounts.
+            </p>
+        </div>
+        <a href="{% url 'import_invigilators' %}" class="btn btn-secondary" style="width: 100%;">Import Invigilators &rarr;</a>
     </div>
 </div>
 {% endblock %}

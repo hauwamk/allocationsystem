@@ -1,54 +1,93 @@
 {% extends "base.html" %}
 
-{% block title %}{{ student.registration_number }}{% endblock %}
+{% block title %}Student Profile | {{ student.registration_number }}{% endblock %}
 
 {% block content %}
-<h2>Student Details</h2>
-
-<div class="card" style="text-align:left; padding:1.5rem; margin-bottom:1.5rem;">
-    <p><strong>Registration Number:</strong> {{ student.registration_number }}</p>
-    <p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
-    <p><strong>Department:</strong> {{ student.get_department_display }}</p>
-    <p><strong>Level:</strong> {{ student.get_level_display }}</p>
-    <p><strong>Gender:</strong> {{ student.get_gender_display }}</p>
-    {% if student.email %}<p><strong>Email:</strong> {{ student.email }}</p>{% endif %}
+<div class="page-header">
+    <div>
+        <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+        <p>Registration Number: <strong>{{ student.registration_number }}</strong></p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'register_courses' id=student.id %}" class="btn btn-primary">Manage Courses</a>
+        <a href="{% url 'edit_student' id=student.id %}" class="btn btn-secondary">Edit Details</a>
+        <a href="{% url 'students_list' %}" class="btn btn-outline">&larr; Back to Students</a>
+    </div>
 </div>
 
-<h3>Registered Courses ({{ registrations|length }})</h3>
-{% if registrations %}
-<table border="1">
-    <tr><th>Code</th><th>Title</th><th>Semester</th></tr>
-    {% for reg in registrations %}
-    <tr>
-        <td>{{ reg.course.course_code }}</td>
-        <td>{{ reg.course.course_title }}</td>
-        <td>{{ reg.course.semester }}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p>Not registered for any courses yet.</p>
-{% endif %}
+<div class="card" style="text-align: left; padding: 1.5rem 1.75rem; margin-bottom: 2rem;">
+    <h3 style="margin-top: 0; margin-bottom: 1rem;">Profile Overview</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Department</div>
+            <div style="font-size: 1.05rem; font-weight: 600;">{{ student.get_department_display }}</div>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Academic Level</div>
+            <div style="font-size: 1.05rem; font-weight: 600;">{{ student.get_level_display }}</div>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Gender</div>
+            <div style="font-size: 1.05rem; font-weight: 600;">{{ student.get_gender_display }}</div>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Email Contact</div>
+            <div style="font-size: 1.05rem; font-weight: 600;">{{ student.email|default:"None listed" }}</div>
+        </div>
+    </div>
+</div>
 
-<h3>Exam Allocations ({{ allocations|length }})</h3>
-{% if allocations %}
-<table border="1">
-    <tr><th>Course</th><th>Date</th><th>Venue</th><th>Seat</th></tr>
-    {% for alloc in allocations %}
-    <tr>
-        <td>{{ alloc.exam_session.exam.course.course_code }}</td>
-        <td>{{ alloc.exam_session.exam.exam_date }}</td>
-        <td>{{ alloc.exam_session.venue.venue_name }}</td>
-        <td>{{ alloc.seating_number }}</td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p>No exam allocations yet.</p>
-{% endif %}
+<div class="page-header" style="margin-top: 1.5rem;">
+    <h3>Enrolled Courses ({{ registrations|length }})</h3>
+</div>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Semester</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registrations %}
+            <tr>
+                <td><strong>{{ reg.course.course_code }}</strong></td>
+                <td>{{ reg.course.course_title }}</td>
+                <td>{{ reg.course.semester }} Semester</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="empty-table-cell">Not registered for any courses yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-<p>
-    <a href="{% url 'edit_student' id=student.id %}">Edit</a> |
-    <a href="{% url 'students_list' %}">Back to Students</a>
-</p>
+<div class="page-header" style="margin-top: 2rem;">
+    <h3>Seated Exam Allocations ({{ allocations|length }})</h3>
+</div>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Exam Date</th>
+                <th>Allocated Venue</th>
+                <th>Assigned Seat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alloc in allocations %}
+            <tr>
+                <td><strong>{{ alloc.exam_session.exam.course.course_code }}</strong></td>
+                <td>{{ alloc.exam_session.exam.exam_date }} &bull; {{ alloc.exam_session.exam.exam_time }}</td>
+                <td><strong>{{ alloc.exam_session.venue.venue_name }}</strong></td>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--primary);">Seat #{{ alloc.seating_number }}</span></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="empty-table-cell">No examination seats allocated yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

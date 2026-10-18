@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Confirm Bulk Registration{% endblock %}
+{% block title %}Confirm Bulk Registration | Exam System{% endblock %}
 
 {% block content %}
-<h2>Confirm Bulk Registration</h2>
-<p>{{ department }} — Level {{ level }} — {{ semester }} Semester</p>
-<p>All students and courses below are pre-checked. Courses marked "All Departments" are shared courses taken by every department at this level. Uncheck anyone with a carryover or exemption before submitting — you can handle their individual exceptions afterward on their own "Register" page.</p>
+<div class="page-header">
+    <div>
+        <h2>Confirm Bulk Course Enrollment</h2>
+        <p>Department: <strong>{{ department }}</strong> &bull; Level: <strong>{{ level }}L</strong> &bull; Semester: <strong>{{ semester }}</strong></p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'bulk_register' %}" class="btn btn-secondary">&larr; Change Selection</a>
+    </div>
+</div>
 
 <form method="post">
     {% csrf_token %}
@@ -13,43 +19,81 @@
     <input type="hidden" name="level" value="{{ level }}">
     <input type="hidden" name="semester" value="{{ semester }}">
 
-    <h3>Courses ({{ courses|length }})</h3>
+    <div class="page-header" style="margin-top: 1.5rem;">
+        <div>
+            <h3>Eligible Courses ({{ courses|length }})</h3>
+            <p>Courses offered to this department/level, including faculty-wide shared courses.</p>
+        </div>
+    </div>
+    
     {% if courses %}
-    <table border="1">
-        <tr><th></th><th>Code</th><th>Title</th><th>Department</th></tr>
-        {% for course in courses %}
-        <tr>
-            <td><input type="checkbox" name="courses" value="{{ course.id }}" checked></td>
-            <td>{{ course.course_code }}</td>
-            <td>{{ course.course_title }}</td>
-            <td>{{ course.get_department_display }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 45px; text-align: center;">Enroll</th>
+                    <th>Course Code</th>
+                    <th>Course Title</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td style="text-align: center;"><input type="checkbox" name="courses" value="{{ course.id }}" checked></td>
+                    <td><strong>{{ course.course_code }}</strong></td>
+                    <td>{{ course.course_title }}</td>
+                    <td><span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ course.get_department_display }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p>No courses found for this department/level/semester. Add them first under Courses.</p>
+    <div class="card" style="text-align: center; margin-bottom: 2rem;">
+        <p style="margin: 0; color: var(--text-muted);">No courses found matching this criteria. Add courses in the catalog first.</p>
+    </div>
     {% endif %}
 
-    <h3>Students ({{ students|length }})</h3>
+    <div class="page-header" style="margin-top: 2rem;">
+        <div>
+            <h3>Enrolled Cohort Students ({{ students|length }})</h3>
+            <p>Students currently active in {{ department }} at {{ level }} Level.</p>
+        </div>
+    </div>
+
     {% if students %}
-    <table border="1">
-        <tr><th></th><th>Reg No</th><th>Name</th></tr>
-        {% for student in students %}
-        <tr>
-            <td><input type="checkbox" name="students" value="{{ student.id }}" checked></td>
-            <td>{{ student.registration_number }}</td>
-            <td>{{ student.first_name }} {{ student.last_name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 45px; text-align: center;">Enroll</th>
+                    <th>Registration No.</th>
+                    <th>Student Full Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td style="text-align: center;"><input type="checkbox" name="students" value="{{ student.id }}" checked></td>
+                    <td><strong>{{ student.registration_number }}</strong></td>
+                    <td>{{ student.first_name }} {{ student.last_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p>No students found for this department/level.</p>
+    <div class="card" style="text-align: center; margin-bottom: 2rem;">
+        <p style="margin: 0; color: var(--text-muted);">No student records found in this cohort.</p>
+    </div>
     {% endif %}
 
     {% if courses and students %}
-    <button type="submit" class="btn">Register All Checked</button>
+    <div style="margin: 2rem 0; display: flex; gap: 1rem; align-items: center;">
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.75rem; font-size: 0.95rem;">✓ Register All Selected Combinations</button>
+        <a href="{% url 'bulk_register' %}" class="btn btn-secondary">Cancel & Start Over</a>
+    </div>
     {% endif %}
 </form>
-
-<p><a href="{% url 'bulk_register' %}">Start over</a></p>
 {% endblock %}

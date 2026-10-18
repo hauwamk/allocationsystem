@@ -1,33 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}
-Invigilators
-{% endblock %}
+{% block title %}Invigilators Roster | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Invigilators Roster</h2>
+        <p>Faculty invigilation staff profiles, contact information, and duty eligibility.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'add_invigilator' %}" class="btn btn-primary">+ Add Invigilator</a>
+        <a href="{% url 'import_invigilators' %}" class="btn btn-secondary">Import Roster CSV</a>
+    </div>
+</div>
 
-<h2>Invigilator List</h2>
-<a href="{% url 'add_invigilator' %}" class="btn btn-primary mb-3">+ Add Invigilator</a>
-
-<table border="1">
-    <tr>
-        <th>Staff ID</th>
-        <th>Full Name</th>
-        <th>Phone Number</th>
-        <th>Action</th>
-    </tr>
-
-    {% for invigilator in invigilators %}
-    <tr>
-        <td>{{ invigilator.staff_id }}</td>
-        <td>{{ invigilator.full_name }}</td>
-        <td>{{ invigilator.phone_number }}</td>
-        <td>
-            <a href="{% url 'edit_invigilator' invigilator.id %}">Edit</a> |
-            <a href="{% url 'delete_invigilator' invigilator.id %}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Staff ID</th>
+                <th>Full Name</th>
+                <th>Contact Phone</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invigilator in invigilators %}
+            <tr>
+                <td><strong>{{ invigilator.staff_id }}</strong></td>
+                <td>{{ invigilator.full_name }}</td>
+                <td>{{ invigilator.phone_number|default:"—" }}</td>
+                <td style="text-align: right;">
+                    <div class="actions-cell" style="justify-content: flex-end;">
+                        <a href="{% url 'edit_invigilator' invigilator.id %}" class="btn btn-sm btn-outline">Edit</a>
+                        <a href="{% url 'delete_invigilator' invigilator.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="empty-table-cell">
+                    No invigilators registered yet. Click <strong>+ Add Invigilator</strong> or <strong>Import Roster CSV</strong>.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

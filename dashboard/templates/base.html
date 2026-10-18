@@ -23,7 +23,7 @@
                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
                     <div class="brand-text">
-                        <span class="brand-name">Faculty of Computing</span>
+                        <span class="brand-name" style="color: #153c36;">Faculty of Computing</span>
                         <span class="brand-subtitle">Examination Venue & Seat Allocation</span>
                     </div>
                 </a>
@@ -35,6 +35,7 @@
 
         <!-- Global Navigation -->
         {% block global_nav %}
+        {% if not user.student %}
         <nav id="mainNav" class="app-nav">
             <div class="nav-inner-container">
 
@@ -58,24 +59,19 @@
                         {% endif %}
                     </div>
                     <div class="nav-user">
+                        {% if user.is_superuser %}
+                        <span class="user-badge admin">Superadmin: {{ user.username }}</span>
+                        <form method="post" action="{% url 'superadmin_logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                        </form>
+                        {% else %}
                         <span class="user-badge admin">Officer: {{ user.username }}</span>
                         <form method="post" action="{% url 'exam_officer_logout' %}" class="logout-form">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
                         </form>
-                    </div>
-
-                    {% elif user.student %}
-                    <div class="nav-links">
-                        <a href="/" class="nav-item">Home</a>
-                        <a href="{% url 'student_dashboard' %}" class="nav-item">My Dashboard</a>
-                    </div>
-                    <div class="nav-user">
-                        <span class="user-badge student">Student: {{ user.username }}</span>
-                        <form method="post" action="{% url 'student_logout' %}" class="logout-form">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-                        </form>
+                        {% endif %}
                     </div>
 
                     {% elif user.invigilator %}
@@ -95,32 +91,54 @@
                 {% else %}
                     <div class="nav-links">
                         <a href="/" class="nav-item">Home</a>
-                        <a href="{% url 'student_login' %}" class="nav-item">Student Login</a>
-                        <a href="{% url 'invigilator_login' %}" class="nav-item">Invigilator Login</a>
-                        <a href="{% url 'exam_officer_login' %}" class="nav-item">Exam Officer Login</a>
+                        
                     </div>
                 {% endif %}
 
             </div>
         </nav>
+        {% endif %}
         {% endblock %}
     </header>
 
-    <!-- Main Content Area -->
-    <main class="main-container">
-        {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags|default:'info' }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+    <!-- Page Body: students get a vertical sidebar beside the content;
+         every other role keeps the ordinary full-width content area. -->
+    <div class="page-shell{% if user.student %} has-student-sidebar{% endif %}">
+
+        {% if user.student %}
+        <aside class="student-sidebar">
+            <nav class="sidebar-nav-links">
+                <a href="/" class="sidebar-nav-item">Home</a>
+                <a href="{% url 'student_dashboard' %}" class="sidebar-nav-item{% if request.resolver_match.url_name == 'student_dashboard' %} active{% endif %}">My Dashboard</a>
+                <a href="{% url 'student_timetable_print' %}" class="sidebar-nav-item{% if request.resolver_match.url_name == 'student_timetable_print' %} active{% endif %}">Timetable</a>
+            </nav>
+            <div class="sidebar-user">
+                <span class="user-badge student">Student: {{ user.username }}</span>
+                <form method="post" action="{% url 'student_logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                </form>
             </div>
+        </aside>
         {% endif %}
 
-        {% block content %}
-        {% endblock %}
-    </main>
+        <!-- Main Content Area -->
+        <main class="main-container">
+            {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
 
     <!-- Footer -->
     <footer class="app-footer">
@@ -143,6 +161,32 @@
             {% endif %}
         </div>
     </footer>
+    <!-- Highlight the nav link matching the current page -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var currentPath = window.location.pathname;
+            var navLinks = document.querySelectorAll('#mainNav .nav-item');
+
+            navLinks.forEach(function (link) {
+                var linkPath = link.getAttribute('href');
+                if (!linkPath || linkPath.charAt(0) !== '/') {
+                    return;
+                }
+
+                var isMatch;
+                if (linkPath === '/') {
+                    isMatch = currentPath === '/';
+                } else {
+                    isMatch = currentPath === linkPath || currentPath.indexOf(linkPath) === 0;
+                }
+
+                if (isMatch) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
+

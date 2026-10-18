@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Student Login{% endblock %}
+{% block title %}Student Login | Examination System{% endblock %}
 
 {% block content %}
-<h2>Student Login</h2>
-<p>Log in with your registration number and password.</p>
+<div class="auth-page-container">
+    <div class="form-card" style="width: 100%; max-width: 440px; margin: 0;">
+        <h2 style="margin-top: 0; font-size: 1.4rem;">Student Login</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+            Sign in with your University Registration Number and account password.
+        </p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Log in</button>
-</form>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.7rem;">Sign In to Student Desk</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

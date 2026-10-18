@@ -1,14 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Register Courses{% endblock %}
+{% block title %}Manage Courses | {{ student.registration_number }}{% endblock %}
 
 {% block content %}
-<h2>Register Courses for {{ student.registration_number }} - {{ student.first_name }} {{ student.last_name }}</h2>
+<div class="page-header">
+    <div>
+        <h2>Manage Course Registrations</h2>
+        <p>Student: <strong>{{ student.registration_number }}</strong> &bull; {{ student.first_name }} {{ student.last_name }} ({{ student.get_department_display }}, {{ student.level }}L)</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'student_detail' id=student.id %}" class="btn btn-secondary">&larr; Back to Student Profile</a>
+    </div>
+</div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.courses }}
-    <br>
-    <button type="submit" class="btn btn-primary">Save Registrations</button>
-</form>
+<div class="form-card" style="max-width: 720px;">
+    <h3 style="margin-top: 0; font-size: 1.15rem; margin-bottom: 0.5rem;">Select Enrolled Courses</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Check all courses this student should sit for during examinations.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="max-height: 400px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            {{ form.courses }}
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Registrations</button>
+            <a href="{% url 'student_detail' id=student.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

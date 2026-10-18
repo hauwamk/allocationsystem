@@ -1,21 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}
-Import Students
-{% endblock %}
+{% block title %}Import Students | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Import Students Directory</h2>
+        <p>Upload a CSV file to bulk import student profiles.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
+    </div>
+</div>
 
-<h2>Import Students</h2>
+<div class="form-card">
+    <div class="notice-section" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV Format</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+            Headers: <code>registration_number</code>, <code>first_name</code>, <code>last_name</code>, <code>department</code>, <code>level</code>, <code>gender</code>, <code>email</code>.
+        </p>
+    </div>
 
-<form method="post" enctype="multipart/form-data">
-
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">Import</button>
-
-</form>
-<p><a href="{% url 'import_hub' %}">Back to Import data</a></p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Start Students Import</button>
+            <a href="{% url 'import_hub' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

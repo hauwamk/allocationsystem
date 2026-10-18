@@ -37,13 +37,15 @@ def department_list(request):
     own database table — this just loops over the choices already
     defined on Student, with a student/course count for each.
     """
+    alias_map = {"COM": "CS", "SWE": "SE", "IFT": "IT", "CBS": "CY"}
     departments = []
     for code, name in Student.DEPARTMENT_CHOICES:
+        alt = alias_map.get(code, code)
         departments.append({
             "code": code,
             "name": name,
-            "student_count": Student.objects.filter(department=code).count(),
-            "course_count": Course.objects.filter(department=code).count(),
+            "student_count": Student.objects.filter(Q(department=code) | Q(department=alt)).count(),
+            "course_count": Course.objects.filter(Q(department=code) | Q(department=alt)).count(),
         })
     return render(request, "dashboard/department_list.html", {"departments": departments})
 
@@ -56,9 +58,11 @@ def department_detail(request, code):
     Courses tagged "ALL" (shared across every department) are included
     here too, since students in this department do take them.
     """
-    department_name = dict(Student.DEPARTMENT_CHOICES).get(code, code)
-    students = Student.objects.filter(department=code)
-    courses = Course.objects.filter(Q(department=code) | Q(department="ALL"))
+    alias_map = {"COM": "CS", "SWE": "SE", "IFT": "IT", "CBS": "CY", "CS": "COM", "SE": "SWE", "IT": "IFT", "CY": "CBS"}
+    alt = alias_map.get(code, code)
+    department_name = dict(Student.DEPARTMENT_CHOICES).get(code) or dict(Student.DEPARTMENT_CHOICES).get(alt, code)
+    students = Student.objects.filter(Q(department=code) | Q(department=alt))
+    courses = Course.objects.filter(Q(department=code) | Q(department=alt) | Q(department="ALL"))
     return render(request, "dashboard/department_detail.html", {
         "department_code": code,
         "department_name": department_name,

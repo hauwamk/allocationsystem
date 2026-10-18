@@ -1,31 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Seating - {{ session.exam.course.course_code }}{% endblock %}
+{% block title %}Seating Chart | {{ session.exam.course.course_code }} - {{ session.venue.venue_name }}{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ session.exam.course.course_code }}: {{ session.exam.course.course_title }}</h2>
+        <p>
+            Venue: <strong>{{ session.venue.venue_name }}</strong> &bull; 
+            Date: <strong>{{ session.exam.exam_date }}</strong> &bull; 
+            Time: <strong>{{ session.exam.exam_time }}</strong> &bull; 
+            Supervisor: <strong>{{ session.invigilator.full_name }}</strong>
+        </p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'session_print' session.id %}" target="_blank" class="btn btn-primary">🖨️ Print Seating Chart</a>
+        <a href="{% url 'session_list' %}" class="btn btn-secondary">&larr; Back to Sessions</a>
+    </div>
+</div>
 
-<h2>{{ session.exam.course.course_code }} — {{ session.venue.venue_name }}</h2>
-<p>Date: {{ session.exam.exam_date }} | Invigilator: {{ session.invigilator }}</p>
-
-<p><a href="{% url 'session_print' session.id %}" target="_blank" class="btn">Print Seating Chart</a></p>
-
-<table border="1">
-    <tr>
-        <th>Seat</th>
-        <th>Registration Number</th>
-        <th>Name</th>
-    </tr>
-    {% for alloc in allocations %}
-    <tr>
-        <td>{{ alloc.seating_number }}</td>
-        <td>{{ alloc.student.registration_number }}</td>
-        <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="3">No students seated in this session.</td></tr>
-    {% endfor %}
-</table>
-
-<p><a href="{% url 'session_list' %}">Back to sessions</a></p>
-
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 100px;">Seat No.</th>
+                <th>Registration Number</th>
+                <th>Student Full Name</th>
+                <th>Department</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alloc in allocations %}
+            <tr>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--primary); font-weight: 700; font-size: 0.85rem;">Seat #{{ alloc.seating_number }}</span></td>
+                <td><strong>{{ alloc.student.registration_number }}</strong></td>
+                <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
+                <td>{{ alloc.student.get_department_display }}</td>
+                <td>{{ alloc.student.level }}L</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-table-cell">No students seated in this session.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

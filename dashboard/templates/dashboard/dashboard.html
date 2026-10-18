@@ -2,8 +2,6 @@
 
 {% block title %}Dashboard | Exam Allocation System{% endblock %}
 
-{% block global_nav %}{% endblock %}
-
 {% block content %}
 
 <style>
@@ -739,36 +737,26 @@
 
 </div>
 
-
-        <h3>Departmental Breakdown</h3>
-
-        <div class="department-cards">
-
-            {% for dept in department_counts %}
-
-            <div class="department-card">
-
-                <h4>
-                    Department: {{ dept.department }}
-                </h4>
-
-                <p>
-                    {{ dept.count }}
-                    Student{{ dept.count|pluralize }}
-                </p>
-
-            </div>
-
-            {% empty %}
-
-            <p>No student data available yet.</p>
-
-            {% endfor %}
-
-        </div>
-
-    </section>
-
+<div class="page-header" style="margin-top: 2rem;">
+    <div>
+        <h3>Departmental Distribution</h3>
+        <p>Student enrolment numbers grouped by department.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'department_list' %}" class="btn btn-sm btn-secondary">View Department Details</a>
+    </div>
 </div>
 
+<div class="department-cards">
+    {% for dept in department_counts %}
+    <div class="department-card">
+        <h4>Department {{ dept.department }}</h4>
+        <p>{{ dept.count }} Student{{ dept.count|pluralize }}</p>
+    </div>
+    {% empty %}
+    <div class="card" style="grid-column: 1 / -1; text-align: center;">
+        <p style="font-size: 1rem; font-weight: normal; color: var(--text-muted);">No student data available yet. Import students or register new records to see distributions.</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

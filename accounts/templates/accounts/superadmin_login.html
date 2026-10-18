@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Superadmin Login{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <h2>Superadmin Login</h2>
+        <p>This page is for Superadmin accounts only. Exam Officers should use the
+           <a href="{% url 'exam_officer_login' %}">Exam Officer Login</a> page instead.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

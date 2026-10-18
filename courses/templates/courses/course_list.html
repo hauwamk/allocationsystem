@@ -1,39 +1,54 @@
 {% extends "base.html" %}
 
-{% block title %}
-Courses
-{% endblock %}
+{% block title %}Courses Catalog | Exam System{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Courses Catalog</h2>
+        <p>Curriculum offerings by department, academic level, and semester.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'add_course' %}" class="btn btn-primary">+ Add Course</a>
+        <a href="{% url 'import_courses' %}" class="btn btn-secondary">Import Courses CSV</a>
+    </div>
+</div>
 
-<h2>Courses</h2>
-<a href="{% url 'add_course' %}" class="btn btn-primary mb-3">+ Add Course</a>
-<a href="{% url 'import_courses' %}" class="btn btn-secondary mb-3">Import Courses</a>
-
-<table border="1">
-    <tr>
-        <th>Course Code</th>
-        <th>Course Title</th>
-        <th>Department</th>
-        <th>Level</th>
-        <th>Semester</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for course in courses %}
-    <tr>
-        <td>{{ course.course_code }}</td>
-        <td>{{ course.course_title }}</td>
-        <td>{{ course.get_department_display }}</td>
-        <td>{{ course.level }}</td>
-        <td>{{ course.semester }}</td>
-        <td>
-            <a href="{% url 'edit_course' id=course.id %}">Edit</a>
-            <a href="{% url 'delete_course' id=course.id %}">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-
-</table>
-
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Department</th>
+                <th>Level</th>
+                <th>Semester</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td><strong>{{ course.course_code }}</strong></td>
+                <td>{{ course.course_title }}</td>
+                <td><span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ course.get_department_display }}</span></td>
+                <td>{{ course.level }}L</td>
+                <td>{{ course.semester }} Semester</td>
+                <td style="text-align: right;">
+                    <div class="actions-cell" style="justify-content: flex-end;">
+                        <a href="{% url 'edit_course' id=course.id %}" class="btn btn-sm btn-outline">Edit</a>
+                        <a href="{% url 'delete_course' id=course.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="empty-table-cell">
+                    No courses recorded yet. Click <strong>+ Add Course</strong> or <strong>Import Courses CSV</strong>.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -1,0 +1,29 @@
+<h3 style="margin-bottom: 1rem;">Access Portals</h3>
+<div class="dashboard-cards" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Student Portal</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Personal Examination Desk</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Access your scheduled exams, registered courses, and seat numbers released prior to commencement.</p>
+        </div>
+        <a href="{% url 'student_login' %}" class="btn btn-primary" style="width: 100%;">Student Login &rarr;</a>
+    </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Invigilator Portal</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Staff Duty Schedule</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Review assigned supervision sessions, examine venue timings, and track invigilation duties.</p>
+        </div>
+        <a href="{% url 'invigilator_login' %}" class="btn btn-secondary" style="width: 100%;">Invigilator Login &rarr;</a>
+    </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Administration</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Exam Officer Console</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Manage timetables, detect scheduling clashes, execute bulk seat allocations, and generate attendance rosters.</p>
+        </div>
+        <a href="{% url 'exam_officer_login' %}" class="btn btn-secondary" style="width: 100%;">Exam Officer Login &rarr;</a>
+    </div>
+</div>

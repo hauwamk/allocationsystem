@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Exam Timetable — {{ student.registration_number }}</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #16212E;
+        padding: 2.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .print-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .print-toolbar button, .print-toolbar a {
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 0.55rem 1.1rem;
+        border-radius: 8px;
+        border: 1px solid #116B54;
+        background: #116B54;
+        color: #fff;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .print-toolbar a.secondary {
+        background: #fff;
+        color: #116B54;
+    }
+    header.doc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 3px solid #116B54;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .institution {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #62736B;
+        margin-bottom: 0.25rem;
+    }
+    h1 {
+        font-size: 1.5rem;
+        color: #153C36;
+    }
+    .doc-subtitle {
+        font-size: 0.9rem;
+        color: #62736B;
+        margin-top: 0.25rem;
+    }
+    .student-info {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #20352E;
+        line-height: 1.6;
+    }
+    .student-info strong { color: #153C36; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    thead th {
+        text-align: left;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #62736B;
+        background: #EAF4EF;
+        padding: 0.75rem 0.9rem;
+        border-bottom: 2px solid #CFE6DA;
+    }
+    tbody td {
+        padding: 0.8rem 0.9rem;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #DFE7E3;
+        vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .status {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .status-upcoming { background: #EAF1F5; color: #2B5C7A; }
+    .status-completed { background: #EAF6EF; color: #1F7A4D; }
+
+    .venue-pending {
+        font-style: italic;
+        color: #92A29A;
+        font-size: 0.85rem;
+    }
+
+    .empty-state {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #F5F7F6;
+        border: 1px solid #DFE7E3;
+        border-radius: 10px;
+        color: #62736B;
+        text-align: center;
+    }
+
+    footer.doc-footer {
+        margin-top: 2.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #DFE7E3;
+        font-size: 0.75rem;
+        color: #92A29A;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @media print {
+        .print-toolbar { display: none; }
+        body { padding: 0; max-width: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="print-toolbar">
+    <a href="{% url 'student_dashboard' %}" class="secondary">Back to Dashboard</a>
+    <button type="button" onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<header class="doc-header">
+    <div>
+        <div class="institution">Bayero University Kano &middot; Faculty of Computing</div>
+        <h1>My Examination Timetable</h1>
+        <div class="doc-subtitle">Examination Venue &amp; Seat Allocation System</div>
+    </div>
+    <div class="student-info">
+        <div><strong>{{ student.first_name }} {{ student.last_name }}</strong></div>
+        <div>Reg. No: {{ student.registration_number }}</div>
+        <div>{{ student.get_department_display|default:student.department }} &middot; Level {{ student.level }}</div>
+    </div>
+</header>
+
+{% if exam_rows %}
+<table>
+    <thead>
+        <tr>
+            <th>Course Code</th>
+            <th>Course Title</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Venue</th>
+            <th>Seat No.</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in exam_rows %}
+        <tr>
+            <td>{{ row.exam.course.course_code }}</td>
+            <td>{{ row.exam.course.course_title }}</td>
+            <td>{{ row.exam.exam_date|date:"M. j, Y" }}</td>
+            <td>{{ row.exam.exam_time|time:"g:i a" }}</td>
+            <td>
+                {% if row.can_view_venue %}
+                    {{ row.allocation.exam_session.venue.name }}
+                {% else %}
+                    <span class="venue-pending">Available 1 hour before exam</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if row.can_view_venue %}
+                    {{ row.allocation.seating_number }}
+                {% else %}
+                    <span class="venue-pending">&mdash;</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if row.is_completed %}
+                    <span class="status status-completed">Completed</span>
+                {% else %}
+                    <span class="status status-upcoming">Upcoming</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    You currently have no scheduled examinations.
+</div>
+{% endif %}
+
+<footer class="doc-footer">
+    <span>Generated {% now "M. j, Y, g:i a" %}</span>
+    <span>Bayero University Kano &middot; Examination Venue &amp; Seat Allocation System</span>
+</footer>
+
+</body>
+</html>

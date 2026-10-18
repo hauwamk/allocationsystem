@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}New Exam Officer{% endblock %}
+{% block title %}Create Exam Officer | Superadmin Console{% endblock %}
 
 {% block content %}
-<h2>Create Exam Officer Account</h2>
-<p>This account will be able to manage students, courses, venues, invigilators, exams, and allocations — but will NOT be able to create other Exam Officer accounts. Only a Superadmin can do that.</p>
+<div class="page-header">
+    <div>
+        <h2>Create Exam Officer Account</h2>
+        <p>Provision staff credentials with operational access across all examination modules.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'exam_officer_list' %}" class="btn btn-secondary">&larr; Back to Exam Officers</a>
+    </div>
+</div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Create Account</button>
-</form>
-
-<p><a href="{% url 'exam_officer_list' %}">Back to Exam Officers</a></p>
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Officer Account</button>
+            <a href="{% url 'exam_officer_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
