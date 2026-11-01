@@ -15,7 +15,7 @@
             {% else %}
                 <span class="badge" style="background: var(--surface-subtle); color: var(--text-muted);">{{ timetable.get_status_display }}</span>
             {% endif %}
-            &bull; Total Exams: <strong>{{ exams|length }}</strong>
+            &bull; Total Exams: <strong>{{ total_exams }}</strong>
         </p>
     </div>
     <div class="page-actions">
@@ -24,16 +24,131 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">🚀 Publish Timetable</button>
             </form>
+            <form method="post" action="{% url 'archive_timetable' timetable.id %}" style="display: inline-block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline">Archive</button>
+            </form>
+        {% elif timetable.status == "PUBLISHED" %}
+            <form method="post" action="{% url 'unpublish_timetable' timetable.id %}" style="display: inline-block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Unpublish to Draft</button>
+            </form>
+            <form method="post" action="{% url 'archive_timetable' timetable.id %}" style="display: inline-block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline">Archive</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'restore_timetable' timetable.id %}" style="display: inline-block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Restore to Draft</button>
+            </form>
         {% endif %}
+        <a href="{% url 'delete_timetable' timetable.id %}" class="btn btn-danger-outline">Delete Batch</a>
         <a href="{% url 'timetable_list' %}" class="btn btn-secondary">&larr; Back to Timetables</a>
     </div>
 </div>
 
-{% if timetable.status == "DRAFT" %}
+{% if replace_preview %}
+<div class="form-card" style="max-width: 100%; margin-bottom: 2rem; border-color: var(--error-border);">
+    <h3 style="margin-top: 0;">Review replacement: {{ timetable.name }}</h3>
+    <p>
+        File: <strong>{{ replace_preview.filename }}</strong>. Nothing has been changed yet &mdash;
+        check the lists below, then confirm or cancel.
+    </p>
+    <p>
+        <strong>{{ replace_preview.to_add|length }}</strong> exam(s) to add &middot;
+        <strong>{{ replace_preview.to_remove|length }}</strong> exam(s) to remove
+        {% if replace_preview.seat_count %}
+        &middot; <strong>{{ replace_preview.seat_count }}</strong> allocated seat(s) will also be removed
+        {% endif %}
+    </p>
+
+    {% if replace_preview.errors %}
+    <h4>Rows that will be skipped ({{ replace_preview.errors|length }})</h4>
+    <p>
+        These rows could not be read. If one belongs to an exam listed for removal below,
+        that exam will not be in the batch after the replacement.
+    </p>
+    <ul>
+        {% for error in replace_preview.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if replace_preview.to_remove %}
+    <h4>Exams that will be removed ({{ replace_preview.to_remove|length }})</h4>
+    <p>These are currently in the batch but not in the uploaded file. Their venue sessions and seating go too.</p>
+    <div style="max-height: 18rem; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0;">
+            {% for exam in replace_preview.to_remove %}
+            <li><strong>{{ exam.course.course_code }}</strong> &mdash; {{ exam.exam_date }}, {{ exam.exam_time }} ({{ exam.duration }} mins)</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if replace_preview.to_add %}
+    <details style="margin-bottom: 1.5rem;">
+        <summary style="cursor: pointer;"><strong>Exams that will be added ({{ replace_preview.to_add|length }})</strong></summary>
+        <ul>
+            {% for row in replace_preview.to_add %}
+            <li><strong>{{ row.course.course_code }}</strong> &mdash; {{ row.exam_date }}, {{ row.exam_time }} ({{ row.duration }} mins)</li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
+
+    <form method="post" action="{% url 'confirm_timetable_replace' timetable.id %}">
+        {% csrf_token %}
+        <div class="form-actions" style="margin: 0;">
+            <button type="submit" name="action" value="confirm" class="btn btn-danger">Confirm Replace</button>
+            <button type="submit" name="action" value="cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
 <div class="card" style="text-align: left; padding: 1.5rem; margin-bottom: 2rem;">
-    <h3 style="margin-top: 0; font-size: 1.15rem;">Upload Exams CSV</h3>
+    <h3 style="margin-top: 0; font-size: 1.15rem;">Official Timetable File (PDF or Image)</h3>
     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Expected CSV Columns: <code>Course Code</code>, <code>Date (YYYY-MM-DD)</code>, <code>Time (HH:MM)</code>, <code>Duration (minutes)</code>.
+        Upload the timetable document itself. Once this batch is published, students can download
+        the uploaded file as a PNG or JPG from their Official Timetables page.
+    </p>
+    {% if timetable.source_file %}
+    <p style="font-size: 0.9rem; margin-bottom: 1rem;">
+        Current file:
+        <a href="{{ timetable.source_file.url }}" target="_blank" rel="noopener">{{ timetable.source_file_name }}</a>
+    </p>
+    {% endif %}
+    {% if timetable.status == "DRAFT" %}
+    <form method="post" action="{% url 'timetable_upload_file' timetable.id %}" enctype="multipart/form-data" style="margin: 0;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 260px;">
+                {{ file_form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-secondary">
+                {% if timetable.source_file %}Replace File{% else %}Upload File{% endif %}
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+        This batch is {{ timetable.get_status_display|lower }}.
+        {% if timetable.status == "ARCHIVED" %}Restore it to draft{% else %}Unpublish it{% endif %}
+        to replace the file.
+    </p>
+    {% endif %}
+</div>
+
+{% if timetable.status == "DRAFT" and not replace_preview %}
+<div class="card" style="text-align: left; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="margin-top: 0; font-size: 1.15rem;">Upload Exams (CSV or Excel)</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Expected columns: <code>Course Code</code>, <code>Date</code>, <code>Time</code>, <code>Duration</code>.
+        Dates can be Excel dates or <code>YYYY-MM-DD</code>; times can be Excel times or 24-hour <code>HH:MM</code>.
+        Duration is in minutes. Rows that duplicate an exam already in this batch are skipped.
     </p>
     <form method="post" action="{% url 'timetable_upload_csv' timetable.id %}" enctype="multipart/form-data" style="margin: 0;">
         {% csrf_token %}
@@ -41,8 +156,9 @@
             <div style="flex: 1; min-width: 260px;">
                 {{ upload_form.as_p }}
             </div>
-            <div>
-                <button type="submit" class="btn btn-secondary">Upload Batch CSV</button>
+            <div style="display: flex; gap: 0.55rem; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-secondary">Upload Exams</button>
+                <a href="{% url 'download_import_template' 'timetable' %}" class="btn btn-outline">Download Excel Template</a>
             </div>
         </div>
     </form>
@@ -50,8 +166,19 @@
 {% endif %}
 
 <div class="page-header" style="margin-top: 1.5rem;">
-    <h3>Exams in this Timetable ({{ exams|length }})</h3>
+    <h3>Exams in this Timetable ({{ total_exams }})</h3>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="timetable-exam-search">Search Exams</label>
+        <input type="search" id="timetable-exam-search" name="q" value="{{ request.GET.q }}" placeholder="Course code or title">
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'timetable_detail' timetable.id %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -75,18 +202,29 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="empty-table-cell">No exams uploaded into this batch yet.</td>
+                <td colspan="5" class="empty-table-cell">
+                    {% if request.GET %}
+                        No exams in this timetable match the search. <a href="{% url 'timetable_detail' timetable.id %}">Clear search</a>.
+                    {% else %}
+                        No exams uploaded into this batch yet.
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
+{% include "includes/pagination.html" %}
+
 {% if timetable.status == "DRAFT" %}
 <div class="notice-section" style="margin-top: 1.5rem;">
     <h3 class="notice-title">Automated Clash Detection Guard</h3>
     <p class="notice-text">
-        Publishing validates student course enrollments against this timetable. If any student has two conflicting exams scheduled at the same date and time, the system will block publication and report all detected conflicts for resolution.
+        Publishing validates this batch before students can see it: it must contain exams,
+        every exam with registered students must have venue seating, and no student may have
+        two exams whose times overlap on the same day. The system blocks publication and
+        reports every problem for resolution.
     </p>
 </div>
 {% endif %}

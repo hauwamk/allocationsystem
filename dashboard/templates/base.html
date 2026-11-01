@@ -19,11 +19,9 @@
         <div class="header-container">
             <div class="brand">
                 <a href="/" class="brand-logo">
-                    <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
+                    <img src="{% static 'images/buk-logo-blue.png' %}" alt="Bayero University Kano" class="brand-icon" width="48" height="48">
                     <div class="brand-text">
-                        <span class="brand-name" style="color: #153c36;">Faculty of Computing</span>
+                        <span class="brand-name">Faculty of Computing</span>
                         <span class="brand-subtitle">Examination Venue & Seat Allocation</span>
                     </div>
                 </a>
@@ -111,6 +109,7 @@
                 <a href="/" class="sidebar-nav-item">Home</a>
                 <a href="{% url 'student_dashboard' %}" class="sidebar-nav-item{% if request.resolver_match.url_name == 'student_dashboard' %} active{% endif %}">My Dashboard</a>
                 <a href="{% url 'student_timetable_print' %}" class="sidebar-nav-item{% if request.resolver_match.url_name == 'student_timetable_print' %} active{% endif %}">Timetable</a>
+                <a href="{% url 'student_official_timetables' %}" class="sidebar-nav-item{% if request.resolver_match.url_name == 'student_official_timetables' or request.resolver_match.url_name == 'student_official_timetable_download' %} active{% endif %}">Official Timetables</a>
             </nav>
             <div class="sidebar-user">
                 <span class="user-badge student">Student: {{ user.username }}</span>
@@ -161,6 +160,7 @@
             {% endif %}
         </div>
     </footer>
+    <script src="{% static 'js/searchable-select.js' %}"></script>
     <!-- Highlight the nav link matching the current page -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {

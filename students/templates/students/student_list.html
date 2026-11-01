@@ -11,9 +11,47 @@
     <div class="page-actions">
         <a href="{% url 'add_student' %}" class="btn btn-primary">+ Add Student</a>
         <a href="{% url 'bulk_register' %}" class="btn btn-secondary">Bulk Register Courses</a>
-        <a href="{% url 'import_students' %}" class="btn btn-secondary">Import CSV</a>
+        <a href="{% url 'import_students' %}" class="btn btn-secondary">Import CSV or Excel</a>
     </div>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="student-search">Search</label>
+        <input type="search" id="student-search" name="q" value="{{ request.GET.q }}" placeholder="Reg no., name, or email">
+    </div>
+    <div class="filter-field">
+        <label for="student-department">Department</label>
+        <select id="student-department" name="department">
+            <option value="">All departments</option>
+            {% for value, label in departments %}
+                <option value="{{ value }}" {% if request.GET.department == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="student-level">Level</label>
+        <select id="student-level" name="level">
+            <option value="">All levels</option>
+            {% for value, label in levels %}
+                <option value="{{ value }}" {% if request.GET.level == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="student-gender">Gender</label>
+        <select id="student-gender" name="gender">
+            <option value="">All genders</option>
+            {% for value, label in genders %}
+                <option value="{{ value }}" {% if request.GET.gender == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'students_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -47,11 +85,17 @@
             {% empty %}
             <tr>
                 <td colspan="6" class="empty-table-cell">
-                    No student records found. Click <strong>+ Add Student</strong> or <strong>Import CSV</strong> to get started.
+                    {% if request.GET %}
+                        No students match the current search or filters. <a href="{% url 'students_list' %}">Clear filters</a>.
+                    {% else %}
+                        No student records found. Click <strong>+ Add Student</strong> or <strong>Import CSV or Excel</strong> to get started.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

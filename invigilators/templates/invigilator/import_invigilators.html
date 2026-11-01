@@ -6,19 +6,21 @@
 <div class="page-header">
     <div>
         <h2>Import Invigilators Roster</h2>
-        <p>Upload a CSV file of invigilator staff records.</p>
+        <p>Upload a CSV or Excel file of invigilator staff records.</p>
     </div>
     <div class="page-actions">
+        <a href="{% url 'download_import_template' 'invigilators' %}" class="btn btn-primary">Download Excel Template</a>
         <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
     </div>
 </div>
 
 <div class="form-card">
     <div class="notice-section" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
-        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV Format</h4>
+        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV or Excel Columns</h4>
         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
             Headers: <code>Staff ID</code>, <code>Full Name</code>, <code>Phone Number</code>.
             Each new invigilator account is provisioned automatically with their Staff ID.
+            The downloadable template includes these headers and an Instructions sheet.
         </p>
     </div>
 

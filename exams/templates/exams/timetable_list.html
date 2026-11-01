@@ -14,6 +14,26 @@
     </div>
 </div>
 
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="timetable-search">Search</label>
+        <input type="search" id="timetable-search" name="q" value="{{ request.GET.q }}" placeholder="Timetable name">
+    </div>
+    <div class="filter-field">
+        <label for="timetable-status">Status</label>
+        <select id="timetable-status" name="status">
+            <option value="">All statuses</option>
+            {% for value, label in statuses %}
+                <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'timetable_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
+
 <div class="table-container">
     <table>
         <thead>
@@ -47,11 +67,17 @@
             {% empty %}
             <tr>
                 <td colspan="5" class="empty-table-cell">
-                    No timetables created yet. Click <strong>+ New Timetable Batch</strong> to set up a semester schedule.
+                    {% if request.GET %}
+                        No timetables match the current search or status. <a href="{% url 'timetable_list' %}">Clear filters</a>.
+                    {% else %}
+                        No timetables created yet. Click <strong>+ New Timetable Batch</strong> to set up a semester schedule.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

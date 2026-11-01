@@ -113,7 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# Nigeria (West Africa Time, UTC+1). Windows needs the tzdata package for this.
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -127,3 +128,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 LOGIN_REDIRECT_URL = 'student_dashboard'
 LOGIN_URL = 'student_login'
+
+# Uploaded timetable documents live outside source control, under media/.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

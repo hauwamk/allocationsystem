@@ -2,8 +2,8 @@
    EXAM ALLOCATION SYSTEM - DESIGN SYSTEM
    ==========================================================================
    Architecture: CSS Variables, Clean Light Surfaces, One Consistent Header
-   Palette: Forest Green + White — clean, light, institutional admin-panel
-   look (white header with a thin green top accent, muted green nav/badge
+   Palette: BUK Blue + White — clean, light, institutional admin-panel
+   look (white header with a thin blue top accent, muted blue nav/badge
    accents, light surfaces throughout).
    ========================================================================== */
 
@@ -12,30 +12,30 @@
    -------------------------------------------------------------------------- */
 :root {
     /* Brand & Accent */
-    --primary: #153C36;            /* Deep Forest Green */
-    --primary-hover: #204E45;      /* Hover State */
-    --accent: #116B54;             /* Emerald Green */
-    --accent-hover: #0C5543;
-    --accent-subtle: #EAF4EF;      /* Subtle green tint for highlights */
-    --accent-border: #CFE6DA;
+    --primary: #0B3B6F;            /* Deep BUK Navy */
+    --primary-hover: #124E8C;      /* Hover State */
+    --accent: #0077A8;             /* BUK Logo Cyan */
+    --accent-hover: #005E86;
+    --accent-subtle: #E6F5FB;      /* Subtle blue tint for highlights */
+    --accent-border: #BFE3F0;
 
     /* Light Canvas & Surfaces */
-    --bg-main: #F5F7F6;            /* Soft neutral canvas */
+    --bg-main: #F3F7FA;            /* Soft neutral canvas */
     --surface: #ffffff;           /* Pure white surface */
-    --surface-subtle: #F0F5F2;    /* Light green-grey surface */
-    --surface-hover: #F7FAF8;     /* Row hover tint */
+    --surface-subtle: #EDF4F8;    /* Light blue-grey surface */
+    --surface-hover: #F7FBFD;     /* Row hover tint */
 
     /* Typography */
-    --text-main: #20352E;         /* High-contrast ink-green text */
-    --text-muted: #62736B;        /* Muted sage text */
-    --text-subtle: #92A29A;       /* Faint annotations */
+    --text-main: #132B40;         /* High-contrast navy ink text */
+    --text-muted: #566B7D;        /* Muted blue-grey text */
+    --text-subtle: #8598A8;       /* Faint annotations */
     --text-inverted: #ffffff;     /* White text on colored elements */
 
     /* Borders & Outlines */
-    --border: #DFE7E3;            /* Primary light border */
-    --border-light: #ECF1EE;      /* Extra subtle inner table divider */
-    --border-dark: #ADCABC;       /* Emphasized input/card border on hover/focus */
-    --border-focus: #153C36;      /* High-contrast focus state */
+    --border: #D8E4EC;            /* Primary light border */
+    --border-light: #E8F0F5;      /* Extra subtle inner table divider */
+    --border-dark: #A8C2D2;       /* Emphasized input/card border on hover/focus */
+    --border-focus: #0B3B6F;      /* High-contrast focus state */
 
     /* Status Notifications & Badges */
     --success: #1F7A4D;
@@ -55,9 +55,9 @@
     --info-border: #BFD6E3;
 
     /* Elevational Micro-Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(22, 62, 51, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(22, 62, 51, 0.06), 0 2px 4px -2px rgba(22, 62, 51, 0.04);
-    --shadow-lg: 0 10px 15px -3px rgba(22, 62, 51, 0.08), 0 4px 6px -4px rgba(22, 62, 51, 0.04);
+    --shadow-sm: 0 1px 2px 0 rgba(11, 59, 111, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(11, 59, 111, 0.06), 0 2px 4px -2px rgba(11, 59, 111, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(11, 59, 111, 0.08), 0 4px 6px -4px rgba(11, 59, 111, 0.04);
 
     /* Layout */
     --radius-sm: 8px;
@@ -403,6 +403,147 @@ table tbody tr:hover {
     font-size: 0.95rem;
 }
 
+/* Table search/filter toolbar */
+.table-toolbar {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 1rem;
+    margin: 1rem 0 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.table-toolbar + .table-container {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 0 1 180px;
+    min-width: 140px;
+}
+
+.filter-field.filter-search {
+    flex: 2 1 280px;
+}
+
+.filter-field label {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-width: 0;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.85rem;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.05rem;
+}
+
+/* Table pagination footer */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: -1.5rem 0 2rem;
+    padding: 0 0.25rem;
+}
+
+.table-count {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.38rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    transition: all var(--transition-fast);
+}
+
+.page-link:hover {
+    background: var(--accent-subtle);
+    border-color: var(--border-dark);
+    color: var(--primary);
+}
+
+.page-link.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-inverted);
+}
+
+.page-link.disabled {
+    background: var(--surface-subtle);
+    border-color: var(--border-light);
+    color: var(--text-subtle);
+    cursor: not-allowed;
+}
+
+.page-ellipsis {
+    padding: 0 0.15rem;
+    color: var(--text-subtle);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+    .table-toolbar {
+        align-items: stretch;
+        padding: 0.85rem;
+    }
+
+    .filter-field,
+    .filter-field.filter-search {
+        flex: 1 1 100%;
+    }
+
+    .filter-actions {
+        width: 100%;
+    }
+
+    .table-pagination {
+        align-items: flex-start;
+        margin-top: -1rem;
+    }
+}
+
 /* --------------------------------------------------------------------------
    7. BUTTONS & INTERACTIVE CONTROLS
    -------------------------------------------------------------------------- */
@@ -527,6 +668,7 @@ label {
 }
 
 input[type="text"],
+input[type="search"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
@@ -552,10 +694,14 @@ input[type="file"] {
     color: var(--text-muted);
 }
 
+.select-search {
+    margin-bottom: 0.5rem;
+}
+
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(17, 107, 84, 0.14);
+    box-shadow: 0 0 0 2px rgba(0, 119, 168, 0.18);
 }
 
 input::placeholder, select::placeholder {
@@ -671,7 +817,7 @@ input::placeholder, select::placeholder {
    it just won't have the photo behind it). */
 .hero-section {
     position: relative;
-    background: linear-gradient(135deg, rgba(245, 247, 246, 0.93) 0%, rgba(245, 247, 246, 0.86) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
+    background: linear-gradient(135deg, rgba(243, 247, 250, 0.93) 0%, rgba(243, 247, 250, 0.86) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 3.5rem 2.5rem;
@@ -687,7 +833,7 @@ input::placeholder, select::placeholder {
     right: 0;
     bottom: 0;
     left: 0;
-    background: radial-gradient(circle at 90% 40%, rgba(17, 107, 84, 0.08) 0%, rgba(245, 247, 246, 0.7) 100%);
+    background: radial-gradient(circle at 90% 40%, rgba(0, 119, 168, 0.10) 0%, rgba(243, 247, 250, 0.7) 100%);
     pointer-events: none;
 }
 
@@ -705,7 +851,7 @@ input::placeholder, select::placeholder {
     padding: 2.5rem 1rem;
     position: relative;
     border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 246, 0.85) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(243, 247, 250, 0.85) 100%), url('/static/images/buk_minimalist_bg.jpg') center/cover no-repeat;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
@@ -718,7 +864,7 @@ input::placeholder, select::placeholder {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(223, 231, 227, 0.85);
+    border: 1px solid rgba(216, 228, 236, 0.85);
 }
 
 .hero-title {
@@ -813,7 +959,7 @@ input::placeholder, select::placeholder {
 }
 
 /* --------------------------------------------------------------------------
-   12. HEADER & NAVIGATION (single, consistent, white + green definition)
+   12. HEADER & NAVIGATION (single, consistent, white + blue definition)
    -------------------------------------------------------------------------- */
 .app-header {
     position: relative;
@@ -821,7 +967,7 @@ input::placeholder, select::placeholder {
     color: var(--text-main);
     border-top: 4px solid var(--accent);
     border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 12px rgba(21, 60, 54, 0.04);
+    box-shadow: 0 2px 12px rgba(11, 59, 111, 0.05);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -846,13 +992,14 @@ input::placeholder, select::placeholder {
 }
 
 .brand-icon {
-    width: 44px;
-    height: 44px;
+    display: block;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
-    padding: 9px;
     border-radius: var(--radius-sm);
-    background: var(--accent-subtle);
-    color: var(--accent);
+    object-fit: cover;
+    background: #00A4C9;
+    box-shadow: 0 2px 6px rgba(0, 83, 113, 0.16);
 }
 
 .brand-text {
@@ -923,7 +1070,7 @@ input::placeholder, select::placeholder {
     align-items: center;
     padding: 9px 12px;
 
-    color: #52675E;
+    color: #4E657A;
     text-decoration: none;
 
     font-size: 13px;
@@ -967,8 +1114,8 @@ input::placeholder, select::placeholder {
     white-space: nowrap;
 }
 
-/* Three distinct role colors — green for officers/superadmin, emerald for
-   students, slate-blue for invigilators, all as light pastel badges to
+/* Three distinct role colors — blue for officers/superadmin, green for
+   students, steel-blue for invigilators, all as light pastel badges to
    suit the white header. */
 .user-badge.admin {
     background: var(--accent-subtle);
@@ -1112,7 +1259,7 @@ input::placeholder, select::placeholder {
 .student-sidebar {
     width: 230px;
     flex-shrink: 0;
-    background: #153C36;
+    background: var(--primary);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1131,7 +1278,7 @@ input::placeholder, select::placeholder {
 .sidebar-nav-item {
     display: block;
     padding: 0.85rem 1.5rem;
-    color: #D7E8E0;
+    color: #D9E9F4;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
@@ -1142,7 +1289,7 @@ input::placeholder, select::placeholder {
 .sidebar-nav-item:hover,
 .sidebar-nav-item.active {
     background: rgba(255, 255, 255, 0.08);
-    border-left-color: #4FD1A5;
+    border-left-color: #5BC8EC;
     color: #ffffff;
 }
 
@@ -1198,7 +1345,7 @@ input::placeholder, select::placeholder {
     .sidebar-nav-item:hover,
     .sidebar-nav-item.active {
         border-left-color: transparent;
-        border-bottom-color: #4FD1A5;
+        border-bottom-color: #5BC8EC;
     }
 
     .sidebar-user {

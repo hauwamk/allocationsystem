@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Official Timetables | Student Desk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Official Examination Timetables</h2>
+        <p>Timetables published by the exam office. Download a copy as a PNG or JPG image.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'student_timetable_print' %}" class="btn btn-secondary">My Personal Timetable</a>
+    </div>
+</div>
+
+{% if timetables %}
+    {% for timetable in timetables %}
+    <div class="card" style="text-align: left; padding: 1.5rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div>
+                <h3 style="margin: 0 0 0.3rem; font-size: 1.1rem;">{{ timetable.name }}</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+                    File: {{ timetable.source_file_name }} &bull; Batch created {{ timetable.created_at|date:"M. j, Y" }}
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.55rem; flex-wrap: wrap;">
+                <a href="{% url 'student_official_timetable_download' timetable.id 'png' %}" class="btn btn-secondary">Download PNG</a>
+                <a href="{% url 'student_official_timetable_download' timetable.id 'jpg' %}" class="btn btn-outline">Download JPG</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="card" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+    <p style="margin: 0;">No official timetable has been published yet. Check back later.</p>
+</div>
+{% endif %}
+{% endblock %}

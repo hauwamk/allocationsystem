@@ -13,6 +13,25 @@
     </div>
 </div>
 
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="venue-search">Search</label>
+        <input type="search" id="venue-search" name="q" value="{{ request.GET.q }}" placeholder="Venue name">
+    </div>
+    <div class="filter-field">
+        <label for="capacity-min">Min Capacity</label>
+        <input type="number" id="capacity-min" name="capacity_min" min="0" value="{{ request.GET.capacity_min }}" placeholder="e.g. 50">
+    </div>
+    <div class="filter-field">
+        <label for="capacity-max">Max Capacity</label>
+        <input type="number" id="capacity-max" name="capacity_max" min="0" value="{{ request.GET.capacity_max }}" placeholder="e.g. 500">
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'venue_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
+
 <div class="table-container">
     <table>
         <thead>
@@ -37,11 +56,17 @@
             {% empty %}
             <tr>
                 <td colspan="3" class="empty-table-cell">
-                    No venues recorded yet. Click <strong>+ Add Venue</strong> to add examination halls.
+                    {% if request.GET %}
+                        No venues match the current search or capacity range. <a href="{% url 'venue_list' %}">Clear filters</a>.
+                    {% else %}
+                        No venues recorded yet. Click <strong>+ Add Venue</strong> to add examination halls.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

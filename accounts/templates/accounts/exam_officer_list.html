@@ -13,6 +13,25 @@
     </div>
 </div>
 
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="officer-search">Search</label>
+        <input type="search" id="officer-search" name="q" value="{{ request.GET.q }}" placeholder="Username, name, or email">
+    </div>
+    <div class="filter-field">
+        <label for="officer-status">Status</label>
+        <select id="officer-status" name="active">
+            <option value="">All accounts</option>
+            <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
+            <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Disabled</option>
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'exam_officer_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
+
 <div class="table-container">
     <table>
         <thead>
@@ -37,10 +56,18 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="3" class="empty-table-cell">No exam officer accounts registered yet.</td>
+                <td colspan="3" class="empty-table-cell">
+                    {% if request.GET %}
+                        No exam officers match the current search or status. <a href="{% url 'exam_officer_list' %}">Clear filters</a>.
+                    {% else %}
+                        No exam officer accounts registered yet.
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

@@ -10,9 +10,20 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'add_invigilator' %}" class="btn btn-primary">+ Add Invigilator</a>
-        <a href="{% url 'import_invigilators' %}" class="btn btn-secondary">Import Roster CSV</a>
+        <a href="{% url 'import_invigilators' %}" class="btn btn-secondary">Import CSV or Excel</a>
     </div>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="invigilator-search">Search</label>
+        <input type="search" id="invigilator-search" name="q" value="{{ request.GET.q }}" placeholder="Staff ID, name, or phone number">
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'invigilators_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -40,11 +51,17 @@
             {% empty %}
             <tr>
                 <td colspan="4" class="empty-table-cell">
-                    No invigilators registered yet. Click <strong>+ Add Invigilator</strong> or <strong>Import Roster CSV</strong>.
+                    {% if request.GET %}
+                        No invigilators match the current search. <a href="{% url 'invigilators_list' %}">Clear search</a>.
+                    {% else %}
+                        No invigilators registered yet. Click <strong>+ Add Invigilator</strong> or <strong>Import CSV or Excel</strong>.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

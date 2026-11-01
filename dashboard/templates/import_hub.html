@@ -6,7 +6,7 @@
 <div class="page-header">
     <div>
         <h2>Data Import Hub</h2>
-        <p>Batch upload structured CSV data files to quickly populate university records.</p>
+        <p>Batch upload CSV or Excel files to quickly populate university records.</p>
     </div>
     <div class="page-actions">
         <a href="{% url 'dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
@@ -17,34 +17,80 @@
     <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <h4>Student Directory</h4>
-            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Student Records CSV</p>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Student Records (CSV or Excel)</p>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
                 Batch import student registration numbers, names, departments, levels, and emails.
             </p>
         </div>
-        <a href="{% url 'import_students' %}" class="btn btn-primary" style="width: 100%;">Import Students &rarr;</a>
+        <div style="display: grid; gap: 0.55rem;">
+            <a href="{% url 'import_students' %}" class="btn btn-primary" style="width: 100%;">Import Students &rarr;</a>
+            <a href="{% url 'download_import_template' 'students' %}" class="btn btn-outline" style="width: 100%;">Download Excel Template</a>
+        </div>
     </div>
 
     <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <h4>Curriculum Offering</h4>
-            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Course Catalog CSV</p>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Course Catalog (CSV or Excel)</p>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
                 Upload course codes, titles, departments, levels, and semester designations.
             </p>
         </div>
-        <a href="{% url 'import_courses' %}" class="btn btn-secondary" style="width: 100%;">Import Courses &rarr;</a>
+        <div style="display: grid; gap: 0.55rem;">
+            <a href="{% url 'import_courses' %}" class="btn btn-primary" style="width: 100%;">Import Courses &rarr;</a>
+            <a href="{% url 'download_import_template' 'courses' %}" class="btn btn-outline" style="width: 100%;">Download Excel Template</a>
+        </div>
     </div>
 
     <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <h4>Faculty Staff</h4>
-            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Invigilators Roster CSV</p>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Invigilators Roster (CSV or Excel)</p>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
                 Import supervisor staff IDs, full names, and contact phone numbers with automatic accounts.
             </p>
         </div>
-        <a href="{% url 'import_invigilators' %}" class="btn btn-secondary" style="width: 100%;">Import Invigilators &rarr;</a>
+        <div style="display: grid; gap: 0.55rem;">
+            <a href="{% url 'import_invigilators' %}" class="btn btn-primary" style="width: 100%;">Import Invigilators &rarr;</a>
+            <a href="{% url 'download_import_template' 'invigilators' %}" class="btn btn-outline" style="width: 100%;">Download Excel Template</a>
+        </div>
     </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Course Enrolment</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Course Registration Lists (CSV or Excel)</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Pick a course, then add or replace its registered students from a class list.
+            </p>
+        </div>
+        <div style="display: grid; gap: 0.55rem;">
+            <a href="{% url 'import_registrations' %}" class="btn btn-primary" style="width: 100%;">Import Course List &rarr;</a>
+            <a href="{% url 'download_import_template' 'registrations' %}" class="btn btn-outline" style="width: 100%;">Download Excel Template</a>
+        </div>
+    </div>
+
+    <div class="card" style="text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h4>Timetable Exams</h4>
+            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Exam Batch (CSV or Excel)</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Upload course codes, dates, times, and durations inside any draft timetable batch.
+            </p>
+        </div>
+        <div style="display: grid; gap: 0.55rem;">
+            <a href="{% url 'timetable_list' %}" class="btn btn-primary" style="width: 100%;">Open Timetables &rarr;</a>
+            <a href="{% url 'download_import_template' 'timetable' %}" class="btn btn-outline" style="width: 100%;">Download Excel Template</a>
+        </div>
+    </div>
+</div>
+
+<div class="notice-section" style="margin-top: 2rem;">
+    <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Working with Import Templates</h4>
+    <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+        Each downloadable workbook has the exact header row on its first sheet plus an Instructions sheet.
+        Fill the first sheet, save it as .xlsx, and upload it here or from the matching import page.
+        CSV files with the same headers continue to work.
+    </p>
 </div>
 {% endblock %}

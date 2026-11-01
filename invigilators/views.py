@@ -1,42 +1,33 @@
-import csv
-import re
-from io import TextIOWrapper
-
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import staff_required
+from exam.imports import (
+    ImportFileError,
+    get_field as _get_field,
+    read_tabular_upload,
+)
+from exam.pagination import paginate
 from .forms import InvigilatorForm, InvigilatorImportForm
 from .models import Invigilator
 
 
-def _normalize_header(header):
-    return re.sub(r"[^a-z0-9]+", "_", header.strip().lower()).strip("_")
-
-
-def _normalize_row(row):
-    normalized = {}
-    for key, value in row.items():
-        if key is None:
-            continue
-        normalized[_normalize_header(key)] = value or ""
-    return normalized
-
-
-def _get_field(row, *possible_names):
-    normalized_row = _normalize_row(row)
-    for name in possible_names:
-        value = normalized_row.get(_normalize_header(name), "")
-        if value:
-            return value.strip()
-    return ""
-
-
 @staff_required
 def invigilators_list(request):
-    invigilators = Invigilator.objects.all()
-    context = {"invigilators": invigilators}
+    invigilators = Invigilator.objects.all().order_by("staff_id")
+    query = request.GET.get("q", "").strip()
+
+    if query:
+        invigilators = invigilators.filter(
+            Q(staff_id__icontains=query)
+            | Q(full_name__icontains=query)
+            | Q(phone_number__icontains=query)
+        )
+
+    page_obj = paginate(request, invigilators)
+    context = {"invigilators": page_obj, "page_obj": page_obj}
     return render(request, "invigilator/invigilator_list.html", context)
 
 
@@ -91,7 +82,7 @@ def add_invigilator(request):
 @staff_required
 def import_invigilators(request):
     """
-    CSV columns expected: Staff ID, Full Name, Phone Number.
+    CSV or Excel columns expected: Staff ID, Full Name, Phone Number.
     Each newly-created invigilator gets a login automatically (username
     and starting password = staff ID), same as add_invigilator.
     """
@@ -99,17 +90,19 @@ def import_invigilators(request):
         form = InvigilatorImportForm(request.POST, request.FILES)
 
         if form.is_valid():
-            csv_file = request.FILES["csv_file"]
-            file = TextIOWrapper(csv_file.file, encoding="utf-8")
-            reader = csv.DictReader(file)
+            try:
+                data = read_tabular_upload(request.FILES["csv_file"])
+            except ImportFileError as exc:
+                messages.error(request, str(exc))
+                data = None
 
             imported = 0
             skipped = 0
 
-            if not reader.fieldnames:
+            if data is not None and not data.headers:
                 messages.error(request, "The uploaded file does not contain any headers.")
-            else:
-                for row in reader:
+            elif data is not None:
+                for row in data.rows:
                     staff_id = _get_field(row, "staff_id", "staff id")
                     if not staff_id:
                         continue

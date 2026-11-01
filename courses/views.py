@@ -1,43 +1,48 @@
-import csv
-import re
-from io import TextIOWrapper
-
+from django.db.models import Q
 from django.shortcuts import render
 
 from accounts.decorators import staff_required
+from exam.departments import department_codes
+from exam.imports import (
+    ImportFileError,
+    get_field as _get_field,
+    read_tabular_upload,
+)
+from exam.pagination import paginate
 from .models import Course
 from .forms import CourseForm, CourseImportForm
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 
 
-def _normalize_header(header):
-    return re.sub(r"[^a-z0-9]+", "_", header.strip().lower()).strip("_")
-
-
-def _normalize_row(row):
-    normalized = {}
-    for key, value in row.items():
-        if key is None:
-            continue
-        normalized[_normalize_header(key)] = value or ""
-    return normalized
-
-
-def _get_field(row, *possible_names):
-    normalized_row = _normalize_row(row)
-    for name in possible_names:
-        value = normalized_row.get(_normalize_header(name), "")
-        if value:
-            return value.strip()
-    return ""
-
-
 @staff_required
 def courses_list(request):
-    courses = Course.objects.all()
-    context = {'courses': courses}
-    return render(request, 'courses/course_list.html', context)
+    courses = Course.objects.all().order_by("course_code")
+    query = request.GET.get("q", "").strip()
+    department = request.GET.get("department", "").strip()
+    level = request.GET.get("level", "").strip()
+    semester = request.GET.get("semester", "").strip()
+
+    if query:
+        courses = courses.filter(
+            Q(course_code__icontains=query) | Q(course_title__icontains=query)
+        )
+    if department:
+        courses = courses.filter(department__in=department_codes(department))
+    if level:
+        courses = courses.filter(level=level)
+    if semester:
+        courses = courses.filter(semester=semester)
+
+    page_obj = paginate(request, courses)
+    context = {
+        "courses": page_obj,
+        "page_obj": page_obj,
+        "departments": Course.DEPARTMENT_CHOICES,
+        "levels": Course.LEVEL_CHOICES,
+        "semesters": Course.SEMESTER_CHOICES,
+    }
+    return render(request, "courses/course_list.html", context)
 
 @staff_required
 def edit_course(request, id):
@@ -84,7 +89,8 @@ def add_course(request):
 @staff_required
 def import_courses(request):
     """
-    CSV columns expected: Course Code, Course Title, Department, Level, Semester.
+    CSV or Excel columns expected: Course Code, Course Title, Department,
+    Level, Semester.
     Department must be one of: CS, SE, IT, CY.
     Level must be one of: 100, 200, 300, 400.
     Semester must be exactly: First or Second.
@@ -94,17 +100,19 @@ def import_courses(request):
         form = CourseImportForm(request.POST, request.FILES)
 
         if form.is_valid():
-            csv_file = request.FILES["csv_file"]
-            file = TextIOWrapper(csv_file.file, encoding="utf-8")
-            reader = csv.DictReader(file)
+            try:
+                data = read_tabular_upload(request.FILES["csv_file"])
+            except ImportFileError as exc:
+                messages.error(request, str(exc))
+                data = None
 
             imported = 0
             skipped = 0
 
-            if not reader.fieldnames:
+            if data is not None and not data.headers:
                 messages.error(request, "The uploaded file does not contain any headers.")
-            else:
-                for row in reader:
+            elif data is not None:
+                for row in data.rows:
                     course_code = _get_field(row, "course_code", "course code")
                     if not course_code:
                         continue

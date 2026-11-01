@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
+from exam.imports import tabular_upload_field
 from .models import Invigilator
 
 
@@ -11,4 +12,4 @@ class InvigilatorForm(ModelForm):
 
 
 class InvigilatorImportForm(forms.Form):
-    csv_file = forms.FileField(label='Select a CSV file')
+    csv_file = tabular_upload_field()

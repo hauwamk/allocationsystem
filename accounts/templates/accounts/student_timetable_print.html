@@ -25,21 +25,21 @@
         font-weight: 600;
         padding: 0.55rem 1.1rem;
         border-radius: 8px;
-        border: 1px solid #116B54;
-        background: #116B54;
+        border: 1px solid #0077A8;
+        background: #0077A8;
         color: #fff;
         cursor: pointer;
         text-decoration: none;
     }
     .print-toolbar a.secondary {
         background: #fff;
-        color: #116B54;
+        color: #0077A8;
     }
     header.doc-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        border-bottom: 3px solid #116B54;
+        border-bottom: 3px solid #0077A8;
         padding-bottom: 1rem;
         margin-bottom: 1.5rem;
     }
@@ -47,25 +47,25 @@
         font-size: 0.8rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #62736B;
+        color: #566B7D;
         margin-bottom: 0.25rem;
     }
     h1 {
         font-size: 1.5rem;
-        color: #153C36;
+        color: #0B3B6F;
     }
     .doc-subtitle {
         font-size: 0.9rem;
-        color: #62736B;
+        color: #566B7D;
         margin-top: 0.25rem;
     }
     .student-info {
         text-align: right;
         font-size: 0.85rem;
-        color: #20352E;
+        color: #132B40;
         line-height: 1.6;
     }
-    .student-info strong { color: #153C36; }
+    .student-info strong { color: #0B3B6F; }
 
     table {
         width: 100%;
@@ -77,15 +77,15 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #62736B;
-        background: #EAF4EF;
+        color: #566B7D;
+        background: #E6F5FB;
         padding: 0.75rem 0.9rem;
-        border-bottom: 2px solid #CFE6DA;
+        border-bottom: 2px solid #BFE3F0;
     }
     tbody td {
         padding: 0.8rem 0.9rem;
         font-size: 0.9rem;
-        border-bottom: 1px solid #DFE7E3;
+        border-bottom: 1px solid #D8E4EC;
         vertical-align: top;
     }
     tbody tr:last-child td { border-bottom: none; }
@@ -102,26 +102,26 @@
 
     .venue-pending {
         font-style: italic;
-        color: #92A29A;
+        color: #8598A8;
         font-size: 0.85rem;
     }
 
     .empty-state {
         margin-top: 2rem;
         padding: 1.5rem;
-        background: #F5F7F6;
-        border: 1px solid #DFE7E3;
+        background: #F3F7FA;
+        border: 1px solid #D8E4EC;
         border-radius: 10px;
-        color: #62736B;
+        color: #566B7D;
         text-align: center;
     }
 
     footer.doc-footer {
         margin-top: 2.5rem;
         padding-top: 1rem;
-        border-top: 1px solid #DFE7E3;
+        border-top: 1px solid #D8E4EC;
         font-size: 0.75rem;
-        color: #92A29A;
+        color: #8598A8;
         display: flex;
         justify-content: space-between;
     }
@@ -136,6 +136,9 @@
 
 <div class="print-toolbar">
     <a href="{% url 'student_dashboard' %}" class="secondary">Back to Dashboard</a>
+    <a href="{% url 'student_official_timetables' %}" class="secondary">Official Timetables</a>
+    <a href="{% url 'student_timetable_image' 'png' %}">Download PNG</a>
+    <a href="{% url 'student_timetable_image' 'jpg' %}">Download JPG</a>
     <button type="button" onclick="window.print()">Print / Save as PDF</button>
 </div>
 
@@ -174,9 +177,11 @@
             <td>{{ row.exam.exam_time|time:"g:i a" }}</td>
             <td>
                 {% if row.can_view_venue %}
-                    {{ row.allocation.exam_session.venue.name }}
-                {% else %}
+                    {{ row.allocation.exam_session.venue.venue_name }}
+                {% elif row.allocation %}
                     <span class="venue-pending">Available 1 hour before exam</span>
+                {% else %}
+                    <span class="venue-pending">Not yet allocated</span>
                 {% endif %}
             </td>
             <td>

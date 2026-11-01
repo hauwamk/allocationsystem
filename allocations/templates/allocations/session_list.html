@@ -9,10 +9,47 @@
         <p>Active pairings of exam schedules, assigned venue halls, and designated invigilators.</p>
     </div>
     <div class="page-actions">
-        <a href="{% url 'allocate_all_exams' %}" class="btn btn-primary">Allocate All Exams</a>
+        <form method="post" action="{% url 'allocate_all_exams' %}" style="margin: 0;"
+              onsubmit="return confirm('Allocate every exam? Any existing seating will be replaced with a new random arrangement.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Allocate All Exams</button>
+        </form>
         <a href="{% url 'exam_list' %}" class="btn btn-secondary">Exams Schedule</a>
     </div>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="session-search">Search</label>
+        <input type="search" id="session-search" name="q" value="{{ request.GET.q }}" placeholder="Course, venue, or invigilator">
+    </div>
+    <div class="filter-field">
+        <label for="session-department">Department</label>
+        <select id="session-department" name="department">
+            <option value="">All departments</option>
+            {% for value, label in departments %}
+                <option value="{{ value }}" {% if request.GET.department == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="session-level">Level</label>
+        <select id="session-level" name="level">
+            <option value="">All levels</option>
+            {% for value, label in levels %}
+                <option value="{{ value }}" {% if request.GET.level == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="session-date">Exam Date</label>
+        <input type="date" id="session-date" name="exam_date" value="{{ request.GET.exam_date }}">
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'session_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -23,6 +60,7 @@
                 <th>Exam Date</th>
                 <th>Venue Hall</th>
                 <th>Invigilator Supervisor</th>
+                <th>Seats Used</th>
                 <th style="text-align: right;">Seating Chart</th>
             </tr>
         </thead>
@@ -34,18 +72,25 @@
                 <td>{{ session.exam.exam_date }} &bull; {{ session.exam.exam_time }}</td>
                 <td><strong>{{ session.venue.venue_name }}</strong> <span style="font-size: 0.8rem; color: var(--text-muted);">(Cap: {{ session.venue.capacity }})</span></td>
                 <td>{{ session.invigilator.full_name }} <span style="font-size: 0.8rem; color: var(--text-muted);">({{ session.invigilator.staff_id }})</span></td>
+                <td><strong>{{ session.seated }}</strong> <span style="font-size: 0.8rem; color: var(--text-muted);">/ {{ session.venue.capacity }}</span></td>
                 <td style="text-align: right;">
                     <a href="{% url 'session_detail' session.id %}" class="btn btn-sm btn-outline">View Seating &rarr;</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="empty-table-cell">
-                    No active sessions allocated yet. Go to <a href="{% url 'exam_list' %}">Exams Schedule</a> and click <strong>Allocate</strong> on an exam.
+                <td colspan="7" class="empty-table-cell">
+                    {% if request.GET %}
+                        No sessions match the current search or filters. <a href="{% url 'session_list' %}">Clear filters</a>.
+                    {% else %}
+                        No active sessions allocated yet. Go to <a href="{% url 'exam_list' %}">Exams Schedule</a> and click <strong>Allocate</strong> on an exam.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

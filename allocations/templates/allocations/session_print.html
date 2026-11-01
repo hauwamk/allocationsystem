@@ -13,7 +13,8 @@
         th { background: #f0f0f0; }
         .print-button { margin-bottom: 1.5rem; padding: 0.5rem 1.2rem; font-size: 0.9rem; cursor: pointer; }
         .signature { margin-top: 3rem; }
-        .signature-line { display: inline-block; width: 220px; border-bottom: 1px solid #333; margin-right: 0.5rem; }
+        .signature-block { display: inline-block; margin-right: 2.5rem; }
+        .signature-line { display: block; width: 220px; border-bottom: 1px solid #333; margin-bottom: 0.3rem; }
         @media print {
             .print-button { display: none; }
         }
@@ -37,13 +38,14 @@
             <th>Seat</th>
             <th>Registration Number</th>
             <th>Name</th>
-            <th>signature</th>
+            <th>Signature</th>
         </tr>
         {% for alloc in allocations %}
         <tr>
             <td>{{ alloc.seating_number }}</td>
             <td>{{ alloc.student.registration_number }}</td>
             <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
+            <td></td>
         </tr>
         {% empty %}
         <tr><td colspan="4">No students seated in this session.</td></tr>
@@ -51,8 +53,14 @@
     </table>
 
     <div class="signature">
-        <span class="signature-line"></span> Invigilator Signature
-        <span class="signature-line" style="margin-left: 2rem;"></span> Date
+        <div class="signature-block">
+            <span class="signature-line"></span>
+            Invigilator Signature
+        </div>
+        <div class="signature-block">
+            <span class="signature-line"></span>
+            Date
+        </div>
     </div>
 
 </body>

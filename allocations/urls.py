@@ -5,4 +5,9 @@ urlpatterns = [
     path('', views.session_list, name='session_list'),
     path('sessions/<int:session_id>/', views.session_detail, name='session_detail'),
     path('sessions/<int:session_id>/print/', views.session_print, name='session_print'),
+    path(
+        'allocations/<int:allocation_id>/remove/',
+        views.remove_allocation,
+        name='remove_allocation',
+    ),
 ]

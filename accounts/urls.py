@@ -7,6 +7,21 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="student_login"), name="student_logout"),
     path("dashboard/", views.student_dashboard, name="student_dashboard"),
     path("timetable/print/", views.student_timetable_print, name="student_timetable_print"),
+    path(
+        "timetable/download/<str:image_format>/",
+        views.student_timetable_image,
+        name="student_timetable_image",
+    ),
+    path(
+        "timetable/official/",
+        views.student_official_timetables,
+        name="student_official_timetables",
+    ),
+    path(
+        "timetable/official/<int:timetable_id>/<str:image_format>/",
+        views.student_official_timetable_download,
+        name="student_official_timetable_download",
+    ),
 
     path("invigilator/login/", views.InvigilatorLoginView.as_view(), name="invigilator_login"),
     path("invigilator/logout/", LogoutView.as_view(next_page="invigilator_login"), name="invigilator_logout"),
@@ -15,6 +30,11 @@ urlpatterns = [
     path("staff/login/", views.ExamOfficerLoginView.as_view(), name="exam_officer_login"),
     path("staff/logout/", LogoutView.as_view(next_page="exam_officer_login"), name="exam_officer_logout"),
     path("import/", views.import_hub, name="import_hub"),
+    path(
+        "import/templates/<slug:kind>/",
+        views.download_import_template,
+        name="download_import_template",
+    ),
 
     # Visibly separate Superadmin entry point — its own URL, template and
     # view, distinct from the Exam Officer login above.

@@ -10,10 +10,55 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'add_exam' %}" class="btn btn-primary">+ Add Exam</a>
-        <a href="{% url 'allocate_all_exams' %}" class="btn btn-secondary">Allocate All Exams</a>
+        <form method="post" action="{% url 'allocate_all_exams' %}" style="margin: 0;"
+              onsubmit="return confirm('Allocate every exam in a draft timetable batch? Any existing seating for those exams will be replaced with a new random arrangement.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">Allocate All Exams</button>
+        </form>
         <a href="{% url 'timetable_list' %}" class="btn btn-secondary">Timetables</a>
     </div>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="exam-search">Search</label>
+        <input type="search" id="exam-search" name="q" value="{{ request.GET.q }}" placeholder="Course code or title">
+    </div>
+    <div class="filter-field">
+        <label for="exam-department">Department</label>
+        <select id="exam-department" name="department">
+            <option value="">All departments</option>
+            {% for value, label in departments %}
+                <option value="{{ value }}" {% if request.GET.department == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="exam-level">Level</label>
+        <select id="exam-level" name="level">
+            <option value="">All levels</option>
+            {% for value, label in levels %}
+                <option value="{{ value }}" {% if request.GET.level == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="exam-date">Exam Date</label>
+        <input type="date" id="exam-date" name="exam_date" value="{{ request.GET.exam_date }}">
+    </div>
+    <div class="filter-field">
+        <label for="exam-batch">Batch</label>
+        <select id="exam-batch" name="batch">
+            <option value="">All exams</option>
+            <option value="standalone" {% if request.GET.batch == "standalone" %}selected{% endif %}>Standalone only</option>
+            <option value="batch" {% if request.GET.batch == "batch" %}selected{% endif %}>In a timetable</option>
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'exam_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -40,12 +85,23 @@
                     {% if exam.timetable %}
                         <span class="badge" style="background: var(--surface-subtle); color: var(--text-main);">{{ exam.timetable.name }}</span>
                     {% else %}
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">Standalone</span>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Standalone (hidden from students)</span>
                     {% endif %}
                 </td>
                 <td style="text-align: right;">
                     <div class="actions-cell" style="justify-content: flex-end;">
-                        <a href="{% url 'allocate_exam' exam.id %}" class="btn btn-sm btn-primary">Allocate</a>
+                        <form method="post" action="{% url 'allocate_exam' exam.id %}" style="margin: 0;"
+                              onsubmit="return confirm('Allocate {{ exam.course.course_code }}? Any existing seating for this exam will be replaced with a new random arrangement.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-primary">Allocate</button>
+                        </form>
+                        {% if exam.session_count %}
+                        <form method="post" action="{% url 'clear_exam_allocation' exam.id %}" style="margin: 0;"
+                              onsubmit="return confirm('Clear all seating for {{ exam.course.course_code }}? {{ exam.seat_count }} seat(s) across {{ exam.session_count }} venue(s) will be removed.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger-outline">Clear Seats</button>
+                        </form>
+                        {% endif %}
                         <a href="{% url 'edit_exam' exam.id %}" class="btn btn-sm btn-outline">Edit</a>
                         <a href="{% url 'delete_exam' exam.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
                     </div>
@@ -54,11 +110,17 @@
             {% empty %}
             <tr>
                 <td colspan="7" class="empty-table-cell">
-                    No scheduled exams yet. Click <strong>+ Add Exam</strong> or create a new Timetable batch.
+                    {% if request.GET %}
+                        No exams match the current search or filters. <a href="{% url 'exam_list' %}">Clear filters</a>.
+                    {% else %}
+                        No scheduled exams yet. Click <strong>+ Add Exam</strong> or create a new Timetable batch.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

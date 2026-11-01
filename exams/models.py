@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.db import models
 from courses.models import Course
 
@@ -19,10 +21,19 @@ class Timetable(models.Model):
 
     name = models.CharField(max_length=100, help_text="e.g. '2026 First Semester'")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="DRAFT")
+    source_file = models.FileField(
+        upload_to="timetables/",
+        blank=True,
+        help_text="The official timetable document (PDF or image) uploaded by the exam officer.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} ({self.get_status_display()})"
+
+    @property
+    def source_file_name(self):
+        return Path(self.source_file.name).name if self.source_file else ""
 
 
 class Exam(models.Model):
@@ -31,8 +42,8 @@ class Exam(models.Model):
     exam_time = models.TimeField()
     duration = models.PositiveIntegerField(help_text="Duration in minutes")
 
-    # Nullable so existing exams created before this feature existed don't
-    # break — those are treated as "always visible" to students.
+    # Nullable so an exam can be prepared before it belongs to a batch;
+    # students only ever see exams in a PUBLISHED batch.
     timetable = models.ForeignKey(
         Timetable, on_delete=models.CASCADE, null=True, blank=True, related_name="exams"
     )

@@ -19,6 +19,17 @@
     </div>
 </div>
 
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="seating-search">Search Students</label>
+        <input type="search" id="seating-search" name="q" value="{{ request.GET.q }}" placeholder="Registration number or name">
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'session_detail' session.id %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
+
 <div class="table-container">
     <table>
         <thead>
@@ -28,6 +39,7 @@
                 <th>Student Full Name</th>
                 <th>Department</th>
                 <th>Level</th>
+                <th style="text-align: right;">Remove</th>
             </tr>
         </thead>
         <tbody>
@@ -38,13 +50,28 @@
                 <td>{{ alloc.student.first_name }} {{ alloc.student.last_name }}</td>
                 <td>{{ alloc.student.get_department_display }}</td>
                 <td>{{ alloc.student.level }}L</td>
+                <td style="text-align: right;">
+                    <form method="post" action="{% url 'remove_allocation' alloc.id %}" style="margin: 0;"
+                          onsubmit="return confirm('Remove {{ alloc.student.registration_number }} from seat {{ alloc.seating_number }}?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger-outline">Remove</button>
+                    </form>
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="empty-table-cell">No students seated in this session.</td>
+                <td colspan="6" class="empty-table-cell">
+                    {% if request.GET %}
+                        No seated students match the search. <a href="{% url 'session_detail' session.id %}">Clear search</a>.
+                    {% else %}
+                        No students seated in this session.
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

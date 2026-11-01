@@ -1,15 +1,24 @@
+import re
 from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.db.models import Q
+from django.http import Http404, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 
 from accounts.decorators import staff_required, superadmin_required
 from accounts.forms import ExamOfficerCreationForm
+from accounts.timetable_image import render_timetable_image
+from exam.imports import build_import_template_response
+from exam.pagination import paginate
+from exam.timetable_files import TimetableFileError, render_timetable_file
+from exams.models import Timetable
 from students.models import Registration
 from allocations.models import Allocation, ExamSession
 
@@ -43,7 +52,7 @@ def _build_student_exam_rows(student):
     exam_rows = []
     for course in registered_courses:
         for exam in course.exam_set.all():
-            if exam.timetable is not None and exam.timetable.status != "PUBLISHED":
+            if exam.timetable is None or exam.timetable.status != "PUBLISHED":
                 continue
 
             allocation = allocation_by_exam_id.get(exam.id)
@@ -111,6 +120,97 @@ def student_timetable_print(request):
     })
 
 
+@login_required
+def student_timetable_image(request, image_format):
+    """
+    Downloads the student's timetable as a PNG or JPEG, so it can be kept
+    on a phone or shared without printing. Built from the same rows as the
+    on-screen timetable, so the venue reveal rule applies here too.
+    """
+    student = getattr(request.user, "student", None)
+    if student is None:
+        return redirect("students_list")
+
+    image_format = image_format.lower()
+    if image_format == "jpeg":
+        image_format = "jpg"
+    if image_format not in ("png", "jpg"):
+        raise Http404("Unsupported image format.")
+
+    _, exam_rows = _build_student_exam_rows(student)
+    content = render_timetable_image(student, exam_rows, image_format)
+
+    safe_registration = re.sub(
+        r"[^A-Za-z0-9]+", "-", student.registration_number
+    ).strip("-")
+    filename = (
+        f"timetable-{safe_registration or 'student'}-"
+        f"{timezone.localdate():%Y-%m-%d}.{image_format}"
+    )
+
+    response = HttpResponse(
+        content,
+        content_type="image/png" if image_format == "png" else "image/jpeg",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+def student_official_timetables(request):
+    """
+    Lists the published timetable documents exam officers have uploaded.
+    Students open this page to download the official timetable as an image.
+    """
+    student = getattr(request.user, "student", None)
+    if student is None:
+        return redirect("students_list")
+
+    timetables = (
+        Timetable.objects.filter(status="PUBLISHED")
+        .exclude(source_file="")
+        .order_by("-created_at")
+    )
+    return render(request, "accounts/student_official_timetables.html", {
+        "student": student,
+        "timetables": timetables,
+    })
+
+
+@login_required
+def student_official_timetable_download(request, timetable_id, image_format):
+    """Converts an officer-uploaded timetable document to a JPG or PNG."""
+    student = getattr(request.user, "student", None)
+    if student is None:
+        return redirect("students_list")
+
+    timetable = get_object_or_404(
+        Timetable, id=timetable_id, status="PUBLISHED"
+    )
+    if not timetable.source_file:
+        raise Http404("This timetable has no document attached.")
+
+    image_format = image_format.lower()
+    if image_format == "jpeg":
+        image_format = "jpg"
+    if image_format not in ("png", "jpg"):
+        raise Http404("Unsupported image format.")
+
+    try:
+        content = render_timetable_file(timetable.source_file, image_format)
+    except TimetableFileError as exc:
+        messages.error(request, str(exc))
+        return redirect("student_official_timetables")
+
+    filename = f"{slugify(timetable.name) or 'timetable'}.{image_format}"
+    response = HttpResponse(
+        content,
+        content_type="image/png" if image_format == "png" else "image/jpeg",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
 class InvigilatorLoginView(auth_views.LoginView):
     template_name = "accounts/invigilator_login.html"
 
@@ -163,6 +263,14 @@ def invigilator_dashboard(request):
 @staff_required
 def import_hub(request):
     return render(request, "import_hub.html")
+
+
+@staff_required
+def download_import_template(request, kind):
+    try:
+        return build_import_template_response(kind)
+    except KeyError:
+        raise Http404("Unknown import template.")
 
 
 class ExamOfficerLoginView(auth_views.LoginView):
@@ -227,7 +335,25 @@ def exam_officer_list(request):
     is specifically about the accounts a Superadmin creates and manages.
     """
     officers = User.objects.filter(is_staff=True, is_superuser=False).order_by("username")
-    return render(request, "accounts/exam_officer_list.html", {"officers": officers})
+    query = request.GET.get("q", "").strip()
+    active = request.GET.get("active", "").strip()
+
+    if query:
+        officers = officers.filter(
+            Q(username__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(email__icontains=query)
+        )
+    if active in ("1", "0"):
+        officers = officers.filter(is_active=(active == "1"))
+
+    page_obj = paginate(request, officers)
+    return render(
+        request,
+        "accounts/exam_officer_list.html",
+        {"officers": page_obj, "page_obj": page_obj},
+    )
 
 
 @superadmin_required

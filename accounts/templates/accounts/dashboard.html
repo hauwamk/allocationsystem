@@ -42,6 +42,12 @@
         <h3>My Examination Schedule</h3>
         <p>Your enrolled courses and assigned seating venues.</p>
     </div>
+    <div class="page-actions">
+        <a href="{% url 'student_timetable_print' %}" class="btn btn-secondary">View Timetable</a>
+        <a href="{% url 'student_timetable_image' 'png' %}" class="btn btn-outline">Download PNG</a>
+        <a href="{% url 'student_timetable_image' 'jpg' %}" class="btn btn-outline">Download JPG</a>
+        <a href="{% url 'student_official_timetables' %}" class="btn btn-outline">Official Timetables</a>
+    </div>
 </div>
 
 {% if exam_rows %}

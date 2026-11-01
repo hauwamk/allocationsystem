@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Timetable Batch | Exam System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Delete Timetable Batch</h2>
+        <p>This permanently removes the batch, its exams and any seating already allocated for them.</p>
+    </div>
+</div>
+
+<div class="form-card" style="border-color: var(--error-border);">
+    <h3 style="margin-top: 0; color: var(--error);">Delete "{{ timetable.name }}"</h3>
+
+    <p style="margin-bottom: 1rem; color: var(--text-main);">
+        <strong>{{ timetable.name }}</strong> ({{ timetable.get_status_display }}) currently holds:
+    </p>
+    <ul style="margin-bottom: 1.5rem;">
+        <li><strong>{{ exam_count }}</strong> exam{{ exam_count|pluralize }}</li>
+        <li><strong>{{ session_count }}</strong> venue session{{ session_count|pluralize }}</li>
+        <li><strong>{{ seat_count }}</strong> student seat{{ seat_count|pluralize }}</li>
+        {% if timetable.source_file %}<li>the uploaded timetable document</li>{% endif %}
+    </ul>
+
+    <p style="margin-bottom: 1.5rem; color: var(--text-main);">
+        All of it will be removed and cannot be recovered. If you only want to retire
+        the timetable, archive it instead.
+    </p>
+
+    <form method="post" style="margin: 0;">
+        {% csrf_token %}
+        <div class="form-actions" style="margin: 0;">
+            <button type="submit" class="btn btn-danger">Yes, Delete Batch</button>
+            <a href="{% url 'timetable_detail' timetable.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

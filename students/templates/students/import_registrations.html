@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Import Course List | Exam System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Import Course List</h2>
+        <p>Choose a course and upload the CSV or Excel list of students registered for it.</p>
+    </div>
+    <div class="page-actions">
+        <a href="{% url 'download_import_template' 'registrations' %}" class="btn btn-primary">Download Excel Template</a>
+        <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
+    </div>
+</div>
+
+{% if preview %}
+<div class="form-card" style="max-width: 100%;">
+    <h3>Review replacement: {{ preview.course.course_code }} - {{ preview.course.course_title }}</h3>
+    <p>
+        File: <strong>{{ preview.filename }}</strong>. Nothing has been changed yet &mdash;
+        check the lists below, then confirm or cancel.
+    </p>
+    <p>
+        <strong>{{ preview.added }}</strong> to add &middot;
+        <strong>{{ preview.already }}</strong> already registered &middot;
+        <strong>{{ preview.removed }}</strong> to remove
+        {% if preview.bad_rows %}&middot; <strong>{{ preview.bad_rows }}</strong> blank rows{% endif %}
+    </p>
+
+    <!-- Rows in the file that don't match any student in the system -->
+    {% if preview.unknown %}
+    <h4>Not found in the system ({{ preview.unknown|length }})</h4>
+    <p>These rows will be ignored. If one is a typo for a student who is already registered, check the removal list below.</p>
+    <ul>
+        {% for reg_no, name in preview.unknown %}
+        <li>{{ reg_no }}{% if name %} &mdash; {{ name }}{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Students found, but the name in the file differs from the system -->
+    {% if preview.name_mismatch %}
+    <h4>Please check these ({{ preview.name_mismatch|length }})</h4>
+    <p>These students were found, but the name in your file doesn't match the system. The reg number may have a typo:</p>
+    <ul>
+        {% for reg_no, file_name, system_name in preview.name_mismatch %}
+        <li>{{ reg_no }}: file says <strong>{{ file_name }}</strong>, system has <strong>{{ system_name }}</strong></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- The destructive part: exactly who would lose their registration -->
+    {% if preview.to_remove %}
+    <h4>Students who will be removed ({{ preview.removed }})</h4>
+    <p>These students are currently registered for this course but are not in the uploaded file.</p>
+    <div style="max-height: 18rem; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+        <ul style="margin: 0;">
+            {% for student in preview.to_remove %}
+            <li>{{ student.registration_number }} &mdash; {{ student.first_name }} {{ student.last_name }} ({{ student.get_department_display }}, {{ student.level }}L)</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if preview.to_add %}
+    <details style="margin-bottom: 1.5rem;">
+        <summary style="cursor: pointer;"><strong>Students who will be added ({{ preview.added }})</strong></summary>
+        <ul>
+            {% for student in preview.to_add %}
+            <li>{{ student.registration_number }} &mdash; {{ student.first_name }} {{ student.last_name }} ({{ student.get_department_display }}, {{ student.level }}L)</li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
+
+    <form method="post" action="{% url 'confirm_registration_replace' %}">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" name="action" value="confirm" class="btn btn-primary">Confirm Replace</button>
+            <button type="submit" name="action" value="cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+    </form>
+</div>
+{% else %}
+<div class="form-card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <!-- Tells the officer what the CSV or Excel file must look like -->
+        <p class="helptext">
+            The file needs the columns <strong>Reg No</strong> and <strong>Full Name</strong>,
+            one student per row. The downloadable template includes both headers.
+        </p>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <a href="{% url 'import_hub' %}" class="btn btn-secondary">Back to Import Hub</a>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<!-- Results box: only shown after an upload has been applied or rejected -->
+{% if summary %}
+<div class="form-card" style="max-width: 100%;">
+    <h3>{{ summary.course.course_code }} - {{ summary.course.course_title }}: import summary</h3>
+    {% if summary.no_match %}
+    <p><strong>Nothing was changed.</strong> No student in the uploaded file matched a registration number in the system. Check the reg numbers and the column header, then upload again.</p>
+    {% endif %}
+    <p>
+        <strong>{{ summary.added }}</strong> added &middot;
+        <strong>{{ summary.already }}</strong> already registered
+        {% if summary.removed %}&middot; <strong>{{ summary.removed }}</strong> removed{% endif %}
+        {% if summary.bad_rows %}&middot; <strong>{{ summary.bad_rows }}</strong> blank rows{% endif %}
+    </p>
+
+    <!-- Students in the file that don't exist in the system yet -->
+    {% if summary.unknown %}
+    <h4>Not found in the system ({{ summary.unknown|length }})</h4>
+    <p>Import these students first, then upload again:</p>
+    <ul>
+        {% for reg_no, name in summary.unknown %}
+        <li>{{ reg_no }}{% if name %} &mdash; {{ name }}{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Students found, but the name in the file differs from the system -->
+    {% if summary.name_mismatch %}
+    <h4>Please check these ({{ summary.name_mismatch|length }})</h4>
+    <p>These were registered, but the name in your file doesn't match the system. The reg number may have a typo:</p>
+    <ul>
+        {% for reg_no, file_name, system_name in summary.name_mismatch %}
+        <li>{{ reg_no }}: file says <strong>{{ file_name }}</strong>, system has <strong>{{ system_name }}</strong></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

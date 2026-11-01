@@ -10,9 +10,47 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'add_course' %}" class="btn btn-primary">+ Add Course</a>
-        <a href="{% url 'import_courses' %}" class="btn btn-secondary">Import Courses CSV</a>
+        <a href="{% url 'import_courses' %}" class="btn btn-secondary">Import CSV or Excel</a>
     </div>
 </div>
+
+<form method="get" class="table-toolbar" role="search">
+    <div class="filter-field filter-search">
+        <label for="course-search">Search</label>
+        <input type="search" id="course-search" name="q" value="{{ request.GET.q }}" placeholder="Course code or title">
+    </div>
+    <div class="filter-field">
+        <label for="course-department">Department</label>
+        <select id="course-department" name="department">
+            <option value="">All departments</option>
+            {% for value, label in departments %}
+                <option value="{{ value }}" {% if request.GET.department == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="course-level">Level</label>
+        <select id="course-level" name="level">
+            <option value="">All levels</option>
+            {% for value, label in levels %}
+                <option value="{{ value }}" {% if request.GET.level == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-field">
+        <label for="course-semester">Semester</label>
+        <select id="course-semester" name="semester">
+            <option value="">All semesters</option>
+            {% for value, label in semesters %}
+                <option value="{{ value }}" {% if request.GET.semester == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+        <a href="{% url 'course_list' %}" class="btn btn-outline">Clear</a>
+    </div>
+</form>
 
 <div class="table-container">
     <table>
@@ -44,11 +82,17 @@
             {% empty %}
             <tr>
                 <td colspan="6" class="empty-table-cell">
-                    No courses recorded yet. Click <strong>+ Add Course</strong> or <strong>Import Courses CSV</strong>.
+                    {% if request.GET %}
+                        No courses match the current search or filters. <a href="{% url 'course_list' %}">Clear filters</a>.
+                    {% else %}
+                        No courses recorded yet. Click <strong>+ Add Course</strong> or <strong>Import CSV or Excel</strong>.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% include "includes/pagination.html" %}
 {% endblock %}

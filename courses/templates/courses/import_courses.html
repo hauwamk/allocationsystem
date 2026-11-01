@@ -6,18 +6,20 @@
 <div class="page-header">
     <div>
         <h2>Import Courses Catalog</h2>
-        <p>Upload a CSV file containing academic course curriculum data.</p>
+        <p>Upload a CSV or Excel file containing academic course curriculum data.</p>
     </div>
     <div class="page-actions">
+        <a href="{% url 'download_import_template' 'courses' %}" class="btn btn-primary">Download Excel Template</a>
         <a href="{% url 'import_hub' %}" class="btn btn-secondary">&larr; Back to Import Hub</a>
     </div>
 </div>
 
 <div class="form-card">
     <div class="notice-section" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
-        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV Format</h4>
+        <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem;">Expected CSV or Excel Columns</h4>
         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">
             Headers: <code>Course Code</code>, <code>Course Title</code>, <code>Department (COM/SWE/IFT/CBS or CS/SE/IT/CY)</code>, <code>Level (100/200/300/400)</code>, <code>Semester (First/Second)</code>.
+            The downloadable template includes these headers and an Instructions sheet.
         </p>
     </div>
 
