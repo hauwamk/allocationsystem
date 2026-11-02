@@ -15,6 +15,10 @@
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.7rem;">Sign In to Officer Console</button>
         </form>
+
+        <p style="margin-top: 1.25rem; margin-bottom: 0; color: var(--text-muted); font-size: 0.9rem; text-align: center;">
+            Superadmin account? <a href="{% url 'superadmin_login' %}">Use the Superadmin Login</a>.
+        </p>
     </div>
 </div>
 {% endblock %}

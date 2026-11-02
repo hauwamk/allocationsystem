@@ -90,22 +90,6 @@
     }
     tbody tr:last-child td { border-bottom: none; }
 
-    .status {
-        display: inline-block;
-        padding: 0.2rem 0.6rem;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    .status-upcoming { background: #EAF1F5; color: #2B5C7A; }
-    .status-completed { background: #EAF6EF; color: #1F7A4D; }
-
-    .venue-pending {
-        font-style: italic;
-        color: #8598A8;
-        font-size: 0.85rem;
-    }
-
     .empty-state {
         margin-top: 2rem;
         padding: 1.5rem;
@@ -163,9 +147,6 @@
             <th>Course Title</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Venue</th>
-            <th>Seat No.</th>
-            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -175,29 +156,6 @@
             <td>{{ row.exam.course.course_title }}</td>
             <td>{{ row.exam.exam_date|date:"M. j, Y" }}</td>
             <td>{{ row.exam.exam_time|time:"g:i a" }}</td>
-            <td>
-                {% if row.can_view_venue %}
-                    {{ row.allocation.exam_session.venue.venue_name }}
-                {% elif row.allocation %}
-                    <span class="venue-pending">Available 1 hour before exam</span>
-                {% else %}
-                    <span class="venue-pending">Not yet allocated</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if row.can_view_venue %}
-                    {{ row.allocation.seating_number }}
-                {% else %}
-                    <span class="venue-pending">&mdash;</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if row.is_completed %}
-                    <span class="status status-completed">Completed</span>
-                {% else %}
-                    <span class="status status-upcoming">Upcoming</span>
-                {% endif %}
-            </td>
         </tr>
         {% endfor %}
     </tbody>

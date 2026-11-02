@@ -39,6 +39,7 @@
                 <th>Officer Username</th>
                 <th>Account Status</th>
                 <th>Role Type</th>
+                <th style="text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -53,10 +54,24 @@
                     {% endif %}
                 </td>
                 <td>Exam Officer (Staff)</td>
+                <td style="text-align: right;">
+                    <div class="actions-cell" style="justify-content: flex-end;">
+                        <form method="post" action="{% url 'toggle_exam_officer_active' officer.id %}" style="margin: 0;"
+                              {% if officer.is_active %}onsubmit="return confirm('Disable this exam officer account? They will no longer be able to sign in.');"{% endif %}>
+                            {% csrf_token %}
+                            {% if officer.is_active %}
+                                <button type="submit" class="btn btn-sm btn-danger-outline">Disable</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-sm btn-primary">Enable</button>
+                            {% endif %}
+                        </form>
+                        <a href="{% url 'reset_exam_officer_password' officer.id %}" class="btn btn-sm btn-outline">Reset Password</a>
+                    </div>
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="3" class="empty-table-cell">
+                <td colspan="4" class="empty-table-cell">
                     {% if request.GET %}
                         No exam officers match the current search or status. <a href="{% url 'exam_officer_list' %}">Clear filters</a>.
                     {% else %}

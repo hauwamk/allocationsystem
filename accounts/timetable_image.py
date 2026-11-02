@@ -1,9 +1,8 @@
 """Draws a student's examination timetable as a PNG or JPEG image.
 
 The web page and this image are fed by the same rows from
-_build_student_exam_rows, so the venue reveal rule holds in both: the
-image can only show a venue and seat the student is already allowed to
-see on screen.
+_build_student_exam_rows and show the same four columns: course code,
+course title, date and time.
 """
 
 from io import BytesIO
@@ -23,19 +22,12 @@ LINE = "#D8E4EC"
 RULE = "#BFE3F0"
 HEADER_BG = "#E6F5FB"
 EMPTY_BG = "#F3F7FA"
-UPCOMING_BG = "#EAF1F5"
-UPCOMING_FG = "#2B5C7A"
-COMPLETED_BG = "#EAF6EF"
-COMPLETED_FG = "#1F7A4D"
 
 COLUMNS = (
-    ("Course Code", 190),
-    ("Course Title", 450),
-    ("Date", 185),
-    ("Time", 135),
-    ("Venue", 220),
-    ("Seat No.", 100),
-    ("Status", 192),
+    ("Course Code", 220),
+    ("Course Title", 780),
+    ("Date", 260),
+    ("Time", 212),
 )
 COLUMN_X = []
 _x = MARGIN
@@ -121,24 +113,12 @@ def _draw_right(draw, right, top, text, font, fill):
 
 def _row_values(row):
     exam = row["exam"]
-    allocation = row["allocation"]
-
-    if allocation is None:
-        venue, seat = "Not yet allocated", "\u2014"
-    elif row["can_view_venue"]:
-        venue = allocation.exam_session.venue.venue_name
-        seat = str(allocation.seating_number)
-    else:
-        venue, seat = "Available 1 hour before exam", "\u2014"
 
     return [
         exam.course.course_code,
         exam.course.course_title,
         _format_date(exam.exam_date),
         _format_time(exam.exam_time),
-        venue,
-        seat,
-        "Completed" if row["is_completed"] else "Upcoming",
     ]
 
 
@@ -150,15 +130,11 @@ def _layout_rows(draw, exam_rows):
         title_lines = _wrap(
             draw, values[1], body_font, COLUMNS[1][1] - 2 * CELL_PADDING
         )
-        venue_lines = _wrap(
-            draw, values[4], body_font, COLUMNS[4][1] - 2 * CELL_PADDING
-        )
-        line_count = max(len(title_lines), len(venue_lines), 1)
+        line_count = max(len(title_lines), 1)
         height = max(ROW_MIN_HEIGHT, line_count * LINE_HEIGHT + 2 * 14)
         rows.append({
             "values": values,
             "title_lines": title_lines,
-            "venue_lines": venue_lines,
             "height": height,
         })
     return rows
@@ -223,7 +199,6 @@ def render_timetable_image(student, exam_rows, image_format="png", generated_at=
 
     body_font = _font(21)
     strong_font = _font(21, bold=True)
-    pill_font = _font(17, bold=True)
 
     y = TABLE_TOP + TABLE_HEADER_HEIGHT
     for row in rows:
@@ -238,29 +213,6 @@ def render_timetable_image(student, exam_rows, image_format="png", generated_at=
                    values[2], body_font, INK)
         _draw_line(draw, COLUMN_X[3] + CELL_PADDING, y, row_height,
                    values[3], body_font, INK)
-        _draw_block(draw, COLUMN_X[4] + CELL_PADDING, y, row_height,
-                    row["venue_lines"], body_font,
-                    MUTED if values[5] == "\u2014" else INK)
-        _draw_line(draw, COLUMN_X[5] + CELL_PADDING, y, row_height,
-                   values[5], body_font, INK)
-
-        label = values[6]
-        pill_bg, pill_fg = (
-            (COMPLETED_BG, COMPLETED_FG) if label == "Completed"
-            else (UPCOMING_BG, UPCOMING_FG)
-        )
-        pill_width = min(COLUMNS[6][1] - 24,
-                         draw.textlength(label, font=pill_font) + 26)
-        pill_height = 36
-        pill_left = COLUMN_X[6] + 12
-        pill_top = y + (row_height - pill_height) / 2
-        draw.rounded_rectangle(
-            [pill_left, pill_top, pill_left + pill_width, pill_top + pill_height],
-            radius=18,
-            fill=pill_bg,
-        )
-        text_x = pill_left + (pill_width - draw.textlength(label, font=pill_font)) / 2
-        _draw_line(draw, text_x, pill_top, pill_height, label, pill_font, pill_fg)
 
         y += row_height
         draw.line([MARGIN, y, WIDTH - MARGIN, y], fill=LINE, width=1)

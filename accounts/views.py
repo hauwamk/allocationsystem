@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -11,6 +12,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
+from django.views.decorators.http import require_POST
 
 from accounts.decorators import staff_required, superadmin_required
 from accounts.forms import ExamOfficerCreationForm
@@ -72,7 +74,7 @@ def _build_student_exam_rows(student):
                 "can_view_venue": can_view_venue,
                 "is_completed": is_completed,
             })
-    exam_rows.sort(key=lambda r: r["exam"].exam_date)
+    exam_rows.sort(key=lambda r: (r["exam"].exam_date, r["exam"].exam_time))
     return registered_courses, exam_rows
 
 
@@ -105,8 +107,8 @@ def student_timetable_print(request):
     """
     Standalone, print-friendly page listing every exam the logged-in
     student is registered for — their personal timetable. Uses the same
-    venue-reveal rule as the dashboard, via _build_student_exam_rows, so
-    the two pages can never show conflicting information.
+    rows as the dashboard via _build_student_exam_rows, showing only the
+    course code, title, date and time.
     """
     student = getattr(request.user, "student", None)
     if student is None:
@@ -125,7 +127,7 @@ def student_timetable_image(request, image_format):
     """
     Downloads the student's timetable as a PNG or JPEG, so it can be kept
     on a phone or shared without printing. Built from the same rows as the
-    on-screen timetable, so the venue reveal rule applies here too.
+    print page, with the same four columns.
     """
     student = getattr(request.user, "student", None)
     if student is None:
@@ -377,3 +379,41 @@ def create_exam_officer(request):
         form = ExamOfficerCreationForm()
 
     return render(request, "accounts/create_exam_officer.html", {"form": form})
+
+
+@superadmin_required
+@require_POST
+def toggle_exam_officer_active(request, user_id):
+    """Disable or re-enable an Exam Officer account."""
+    officer = get_object_or_404(
+        User, id=user_id, is_staff=True, is_superuser=False
+    )
+
+    officer.is_active = not officer.is_active
+    officer.save(update_fields=["is_active"])
+
+    state = "enabled" if officer.is_active else "disabled"
+    messages.success(request, f"Exam Officer account '{officer.username}' {state}.")
+    return redirect("exam_officer_list")
+
+
+@superadmin_required
+def reset_exam_officer_password(request, user_id):
+    """Lets a Superadmin set a new password for an Exam Officer."""
+    officer = get_object_or_404(
+        User, id=user_id, is_staff=True, is_superuser=False
+    )
+
+    if request.method == "POST":
+        form = SetPasswordForm(officer, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Password reset for '{officer.username}'.")
+            return redirect("exam_officer_list")
+    else:
+        form = SetPasswordForm(officer)
+
+    return render(request, "accounts/reset_exam_officer_password.html", {
+        "officer": officer,
+        "form": form,
+    })

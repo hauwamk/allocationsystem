@@ -57,6 +57,7 @@
                         {% endif %}
                     </div>
                     <div class="nav-user">
+                        <a href="{% url 'password_change' %}" class="btn btn-sm btn-outline-light">Change Password</a>
                         {% if user.is_superuser %}
                         <span class="user-badge admin">Superadmin: {{ user.username }}</span>
                         <form method="post" action="{% url 'superadmin_logout' %}" class="logout-form">
