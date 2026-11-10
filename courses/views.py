@@ -13,7 +13,7 @@ from .models import Course
 from .forms import CourseForm, CourseImportForm
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
-
+from students.models import Registration
 
 @staff_required
 def courses_list(request):
@@ -147,3 +147,22 @@ def import_courses(request):
         form = CourseImportForm()
 
     return render(request, "courses/import_courses.html", {"form": form})
+
+@staff_required
+def course_students(request, id):
+    """Shows every student registered for one course."""
+    course = get_object_or_404(Course, id=id)
+
+    # All registrations for this course, with the student loaded in one query,
+    # sorted by registration number.
+    registrations = (
+        Registration.objects.filter(course=course)
+        .select_related("student")
+        .order_by("student__registration_number")
+    )
+
+    return render(
+        request,
+        "courses/course_students.html",
+        {"course": course, "registrations": registrations},
+    )

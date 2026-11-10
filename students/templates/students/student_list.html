@@ -10,7 +10,9 @@
     </div>
     <div class="page-actions">
         <a href="{% url 'add_student' %}" class="btn btn-primary">+ Add Student</a>
+        {% comment %}
         <a href="{% url 'bulk_register' %}" class="btn btn-secondary">Bulk Register Courses</a>
+       {% endcomment %}
         <a href="{% url 'import_students' %}" class="btn btn-secondary">Import CSV or Excel</a>
     </div>
 </div>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Students - {{ course.course_code }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ course.course_code }} - {{ course.course_title }}</h2>
+<p>Registered students: <strong>{{ registrations|length }}</strong></p>
+
+<p><a href="{% url 'course_list' %}" class="btn btn-secondary">Back to Courses</a></p>
+
+{% if registrations %}
+<div class="table-responsive">
+    <table border="1">
+        <tr>
+            <th>#</th>
+            <th>Registration Number</th>
+            <th>Full Name</th>
+        </tr>
+        {% for registration in registrations %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ registration.student.registration_number }}</td>
+            <td>{{ registration.student.first_name }} {{ registration.student.last_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% else %}
+<p>No students are registered for this course yet.</p>
+{% endif %}
+
+{% endblock %}

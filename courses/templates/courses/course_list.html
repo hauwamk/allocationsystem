@@ -74,6 +74,7 @@
                 <td>{{ course.semester }} Semester</td>
                 <td style="text-align: right;">
                     <div class="actions-cell" style="justify-content: flex-end;">
+                        <a href="{% url 'course_students' id=course.id %}"class="btn btn-sm btn-outline">students</a>
                         <a href="{% url 'edit_course' id=course.id %}" class="btn btn-sm btn-outline">Edit</a>
                         <a href="{% url 'delete_course' id=course.id %}" class="btn btn-sm btn-danger-outline">Delete</a>
                     </div>
